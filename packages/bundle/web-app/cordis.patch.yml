@@ -232,6 +232,11 @@
     - id: ui-deliverables
       name: '@deepseek-ai/dsh-client-ui-deliverables'
 
+    # Short-drama creation mode reading panel: the 「短剧」 conversation view
+    # over the drama preset's workspace conventions and five-document projection.
+    - id: ui-drama
+      name: '@deepseek-ai/dsh-client-ui-drama'
+
 
     - id: ui-workspace
       name: '@deepseek-ai/dsh-client-ui-workspace'

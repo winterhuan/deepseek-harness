@@ -326,6 +326,7 @@
     { "path": "./packages/lsp/lsp" },
     { "path": "./packages/lsp/lsp-stdio" },
     { "path": "./packages/lsp/tool-lsp" },
+        { "path": "./packages/client/ui-drama/tsconfig.host.json" },
     { "path": "./apps/cli" }
   ]
 }

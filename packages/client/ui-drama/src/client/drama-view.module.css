@@ -1,0 +1,210 @@
+/* The short-drama panel fills the view area: header band, then list + reading
+   pane side by side. Tokens only (--dsw-alias-*) and no literal colors. */
+.view {
+  display: flex;
+  overflow: hidden;
+  flex-direction: column;
+  height: 100%;
+  color: var(--dsw-alias-label-primary);
+}
+
+/* Header: summary chips + manual refresh. */
+.header {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--dsw-alias-border-l2);
+  font-size: 13px;
+  line-height: 18px;
+}
+
+.summary {
+  flex: 1 1 auto;
+  color: var(--dsw-alias-label-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.action {
+  flex-shrink: 0;
+  padding: 3px 10px;
+  border: 1px solid var(--dsw-alias-border-l2);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--dsw-alias-label-primary);
+  font-size: 12px;
+  line-height: 18px;
+  cursor: pointer;
+}
+
+.action:hover {
+  background: var(--dsw-alias-interactive-bg-hover);
+}
+
+/* Body: two columns; the list scrolls independently of the reading pane. */
+.body {
+  display: flex;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  width: 240px;
+  overflow-y: auto;
+  border-right: 1px solid var(--dsw-alias-border-l2);
+  --dsh-scrollbar-thumb: var(--dsw-alias-scrollbar-bg-l2);
+  --dsh-scrollbar-thumb-hover: var(--dsw-alias-scrollbar-hover-l2);
+}
+
+.items {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 4px 8px 12px;
+}
+
+.subList {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 4px 8px 12px;
+  border-top: 1px solid var(--dsw-alias-border-l2);
+}
+
+.subListTitle {
+  padding: 4px 10px;
+  color: var(--dsw-alias-label-dimmed);
+  font-size: 12px;
+  line-height: 18px;
+}
+
+.item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 6px 10px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--dsw-alias-label-primary);
+  text-align: left;
+  font-size: 13px;
+  line-height: 18px;
+  cursor: pointer;
+}
+
+.item:hover {
+  background: var(--dsw-alias-interactive-bg-hover);
+}
+
+.itemActive {
+  background: var(--dsw-alias-bg-layer-3);
+}
+
+.itemMeta {
+  color: var(--dsw-alias-label-dimmed);
+  font-size: 11px;
+  line-height: 16px;
+}
+
+.listEmpty {
+  padding: 12px 10px;
+  color: var(--dsw-alias-label-dimmed);
+  font-size: 12px;
+  line-height: 18px;
+}
+
+/* Reading pane: document prose and projection preview. */
+.pane {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-width: 0;
+  overflow-y: auto;
+  padding: 16px 20px;
+  --dsh-scrollbar-thumb: var(--dsw-alias-scrollbar-bg-l2);
+  --dsh-scrollbar-thumb-hover: var(--dsw-alias-scrollbar-hover-l2);
+}
+
+.docHeader {
+  padding-bottom: 4px;
+  border-bottom: 1px solid var(--dsw-alias-border-l2);
+  color: var(--dsw-alias-label-secondary);
+  font-size: 12px;
+  line-height: 18px;
+}
+
+.prose {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-size: 14px;
+  line-height: 24px;
+}
+
+.truncated {
+  margin-top: 12px;
+  color: var(--dsw-alias-label-dimmed);
+  font-size: 12px;
+  line-height: 18px;
+}
+
+.diagList {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.diag {
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  line-height: 18px;
+}
+
+.diagError {
+  background: var(--dsw-alias-state-error-secondary);
+  color: var(--dsw-alias-label-primary);
+}
+
+.diagWarn {
+  background: var(--dsw-alias-state-warn-secondary);
+  color: var(--dsw-alias-label-primary);
+}
+
+.mediaRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 8px;
+  border-bottom: 1px solid var(--dsw-alias-border-l2);
+  font-size: 12px;
+  line-height: 18px;
+}
+
+/* Full-area states: loading, failure, and the no-project guidance. */
+.state {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 24px;
+  color: var(--dsw-alias-label-secondary);
+  text-align: center;
+  font-size: 13px;
+  line-height: 20px;
+}
+
+.statePrimary {
+  color: var(--dsw-alias-label-primary);
+}
