@@ -1,0 +1,5 @@
+{
+  "title": "金瓶梅 · 风月总账",
+  "description": "《金瓶梅》互动改编示例，用于验证 novel-to-game 管线的输入、核心循环、结局与重开流程。",
+  "targetRuntime": "web"
+}

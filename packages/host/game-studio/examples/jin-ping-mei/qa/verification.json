@@ -1,0 +1,19 @@
+{
+  "status": "PASS",
+  "checks": {
+    "launch": "PASS",
+    "render": "PASS",
+    "input": "PASS",
+    "coreLoop": "PASS",
+    "outcome": "PASS",
+    "restart": "PASS"
+  },
+  "completeRun": {
+    "id": "example-jin-ping-mei",
+    "command": "open build/app/index.html",
+    "exitCode": 0,
+    "environment": "example"
+  },
+  "evidence": "examples/jin-ping-mei/build/app/index.html",
+  "limitations": []
+}

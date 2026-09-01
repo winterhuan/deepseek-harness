@@ -1,0 +1,3 @@
+name: 游戏创作模式
+description: 用于将小说/故事改编为可玩游戏的创作 Agent，集成 novel-to-game 管线、实时预览与 QA 验证。
+order: 5

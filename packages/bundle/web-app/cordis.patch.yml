@@ -232,6 +232,20 @@
     - id: ui-deliverables
       name: '@deepseek-ai/dsh-client-ui-deliverables'
 
+    # Novel-writing mode reading panel: the 「小说」 conversation view over
+    # the novelist preset's workspace conventions.
+    - id: ui-novel
+      name: '@deepseek-ai/dsh-client-ui-novel'
+
+    # Short-drama creation mode reading panel: the 「短剧」 conversation view
+    # over the drama preset's workspace conventions and five-document projection.
+    - id: ui-drama
+      name: '@deepseek-ai/dsh-client-ui-drama'
+
+    # Game-studio mode panel: the 「游戏」 conversation view over the
+    # game-studio preset's workspace conventions and playable preview.
+    - id: ui-game-studio
+      name: '@deepseek-ai/dsh-client-ui-game-studio'
 
     - id: ui-workspace
       name: '@deepseek-ai/dsh-client-ui-workspace'
