@@ -5,4 +5,5 @@
   - menuitem "PTC mode All Standard mode capabilities, with tools exposed through the PTC mode SDK so the model can combine multi-step operations in one TypeScript program."
   - menuitem "Minimal mode Two-tool coding agent with persistent bash and str_replace_editor."
   - menuitem "Creator mode Built for creating custom agent presets, with all Standard mode capabilities plus runtime inspection, plugin experiments, and preset-authoring guidance."
+  - menuitem "小说创作模式 长篇小说创作模式：扫榜选题、拆文、立项、大纲、人物、分章写作、追踪协议（角色快照/伏笔/双时间线/续写状态卡）、日更、修订、多视角审稿、去 AI 味、导入已有作品与封面简报，配 Web 阅读视图。"
   - menuitem "Refusing mode Resolves, then refuses to start."

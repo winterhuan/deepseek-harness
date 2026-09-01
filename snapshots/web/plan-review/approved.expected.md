@@ -8,6 +8,7 @@
     - img
   - tablist:
     - tab "Chat" [selected]
+    - tab "Novel"
     - tab "Trajectory"
 - img
 - text: plan Plan mode on. Use /plan off to leave.
