@@ -1,0 +1,174 @@
+# The `drama` agent preset: short-drama / manhua-drama creation.
+#
+# Composition rules mirror the `standard` and `novelist` presets: this is an
+# AGENT-PLANE file, mounted once under a standing scope; every session naming
+# it joins by scope parentage. A service row here MUST sit inside a group
+# carrying an `isolate` realm (see `standard` for the full realm rationale).
+#
+# Choices relative to `novelist`:
+# - The persona carries the short-drama identity, the creator-first five-doc
+#   routing workflow, and the on-disk project conventions (`剧集/<EP>/` with
+#   `剧本.md`/`视觉设定.md`/`分镜.md`/`图片提示词.md`/`视频提示词.md`, plus a
+#   `.drama/board.json` state board).
+# - `drama-tools` is a preset-relative file plugin (zero npm imports) providing
+#   the project scaffold and the per-episode tracking/transaction tools.
+# - `skill-filesystem` points `customSkillDirs` at this preset's own `skills/`
+#   so the ten craft skills travel with the preset directory (same pattern the
+#   `cordis` and `novelist` presets use).
+# - `tool-short-drama-production` is a preset-local UI-intent tool: it feeds
+#   the browser production projection but never edits creator documents,
+#   generates media, or counts as creator confirmation for paid production.
+
+# ── identity ────────────────────────────────────────────────────────────────
+
+# The preset's own persona, shadowing the deployment default for this agent.
+# `{{model}}` and `{{cwd}}` resolve from the agent's own route and workspace.
+- id: persona
+  name: '@deepseek-ai/dsh-persona'
+  config:
+    text: >-
+      你是「短剧创作模式」下的短剧创作 Agent，由 {{model}} 模型驱动，工作目录是 {{cwd}}。你与创作者协作进行短剧或漫剧创作，覆盖完整生命周期：开发想法/改编原著、分集规划、单集编剧、资产设定、图片/视频提示词、分镜、确认后生产与审稿。每个阶段开始前，先用 skill 工具加载对应技艺 skill，按其中的方法工作。
+
+      项目采用 creator-first 五文档工作流，统一落在工作目录的 `剧集/<EP>/`：`剧本.md`（可表演的剧本）、`视觉设定.md`（人物/造型/地点/道具）、`分镜.md`（镜头与冻结关键帧）、`图片提示词.md`（IMG-* 可复制提示词）、`视频提示词.md`（MOTION-* 可复制提示词）。按需维护这些文档，不预建空文件、不倒补用户未点名的阶段、不建立并行的结构化创作真相；`项目开发/` 是可选分析工作区，不参与单集布局判定。`short-drama` 负责项目初始化、跨阶段路由、制作形态与 Look Development；明确的写作/资产/提示词/分镜/审查请求由对应子 skill 直接处理。
+
+      追踪协议：`drama_board init` 在 `剧集/.drama/board.json`（或项目根 `.drama/board.json`）建立项目状态板的单一数据来源，只能通过工具读写；`drama_board episode` 登记/更新单集状态，`drama_board commit` 按集事务提交并重建派生视图（每集已有哪几份创作文档、各阶段状态、人物/地点/道具台账、跨集连续性、待确认生产）。派生视图只由工具生成，绝不手改。
+
+      生产纪律：媒体生产永远遵循四步硬闸门（建立有边界的 job → prepare 展示完整预览 → 创作者看到预览后明确确认 → run），顺序不可合并；`short_drama_production` 工具只负责聚焦语义目标、显式顺序与登记真实 job，不修改创作文档、不生成媒体、也不替代生产确认。审稿用 short-drama-review 的多视角对抗模式，可派子代理并行。尊重创作者的题材、结局与尺度决定，不擅自更改；重大分歧摆出选项交创作者裁决。需要事实核验时用 web 工具检索并注明来源。创作者可以在 Web 界面的「短剧」视图中查看每集文档、资产、分镜、生产任务与关系画布。
+- id: agent-instructions
+  name: '@deepseek-ai/dsh-agent-instructions'
+  config:
+    maxBytes: 65536
+
+# ── shell ───────────────────────────────────────────────────────────────────
+
+# Word counts, backups, and bulk file chores for manuscripts and media lists.
+# Both consume the host registry; their executors stay host-plane (see
+# `standard`).
+- id: tool-bash
+  name: '@deepseek-ai/dsh-tool-bash'
+  disabled: !!js process.platform === 'win32'
+
+- id: tool-pwsh
+  name: '@deepseek-ai/dsh-tool-pwsh'
+  disabled: !!js process.platform !== 'win32'
+
+# ── filesystem ──────────────────────────────────────────────────────────────
+
+# The writing surface: `剧集/`, visual-setup, storyboard and prompt documents.
+# The `fs` service and its policy stay in the host.
+- id: tool-fs
+  name: '@deepseek-ai/dsh-tool-fs'
+
+- id: tool-fs-search
+  name: '@deepseek-ai/dsh-tool-fs-search'
+  config:
+    sampleOverCapGlobResults: false
+
+# ── background jobs ────────────────────────────────────────────────────────
+
+# Model-facing controls so `tool-bash` `run_in_background` results stay
+# collectable; the task registry is host-plane (see `standard`).
+- id: tool-jobs
+  name: '@deepseek-ai/dsh-tool-jobs'
+
+# ── skills ──────────────────────────────────────────────────────────────────
+
+# `customSkillDirs` adds this preset's own `skills/` directory, so the ten
+# craft skills load from the preset itself. The merged catalog also carries
+# whatever the deployment registered globally.
+- id: skill-filesystem
+  name: '@deepseek-ai/dsh-skill-filesystem'
+  config:
+    customSkillDirs:
+      - !!js "process.getBuiltinModule('node:url').fileURLToPath(new URL('skills/', baseUrl))"
+
+- id: tool-skill
+  name: '@deepseek-ai/dsh-tool-skill'
+
+# ── goals ──────────────────────────────────────────────────────────────────
+
+# Long creation objectives ("finish episode three") continue across rounds;
+# the goal service and session driver stay host-plane.
+- id: command-goal
+  name: '@deepseek-ai/dsh-command-goal'
+
+- id: tool-goal
+  name: '@deepseek-ai/dsh-tool-goal'
+
+# ── project tools ───────────────────────────────────────────────────────────
+
+# Preset-relative file plugin: scaffold + board state + versioned track
+# transactions. Zero npm imports by design — the preset directory ships no
+# node_modules, so every Node builtin arrives through
+# `process.getBuiltinModule` and the only services are the `tools` registry
+# and the `ctx.fs` backend.
+- id: drama-tools
+  name: ./plugins/drama-tools.js
+
+# ── delegation ──────────────────────────────────────────────────────────────
+
+# The subagents registry lives in the HOST composition (see `standard` for the
+# realm rationale); this preset contributes the delegation TOOLS so the
+# multi-perspective review (short-drama-review) can spawn its role perspectives
+# in parallel, and long-material analysis can fan per-episode work out.
+- id: delegation
+  name: cordis:group
+  group: true
+  isolate:
+    workflowEngine: true
+  config:
+    - id: tool-subagent-control
+      name: '@deepseek-ai/dsh-tool-subagent-control'
+
+    - id: tool-subagent-list-agents
+      name: '@deepseek-ai/dsh-tool-subagent-control/list-agents'
+
+    - id: tool-subagent
+      name: '@deepseek-ai/dsh-tool-subagent'
+      config:
+        provider: spawn
+        toolName: subagent
+        modelSelectionSettings: true
+        backgroundMode: continuable
+
+# ── compaction ──────────────────────────────────────────────────────────────
+
+# `compaction-basic` reads `toolResultPrune` through `ctx.get`, so the pruner
+# must share this realm rather than sit outside it (see `standard`).
+- id: compaction
+  name: cordis:group
+  group: true
+  isolate:
+    compaction: true
+    toolResultPruner: true
+  config:
+    - id: compaction-basic
+      name: '@deepseek-ai/dsh-compaction-basic'
+
+    - id: command-compact
+      name: '@deepseek-ai/dsh-command-compact'
+
+    - id: tool-result-pruner
+      name: '@deepseek-ai/dsh-compaction-tool-result-pruner'
+      config:
+        thresholdChars: 8192
+        headChars: 4096
+        tailChars: 1024
+
+# ── remaining model-facing rows ─────────────────────────────────────────────
+
+- id: tool-ask-user
+  name: '@deepseek-ai/dsh-tool-ask-user'
+
+- id: tool-todo
+  name: '@deepseek-ai/dsh-tool-todo'
+  config:
+    allowParallelInProgress: true
+
+# The `web` service and its search provider stay in the host composition; only
+# the model-facing tool is per-session.
+- id: tool-web
+  name: '@deepseek-ai/dsh-tool-web'
+  config:
+    fetch: true
+    searchTimeoutMs: 60000
