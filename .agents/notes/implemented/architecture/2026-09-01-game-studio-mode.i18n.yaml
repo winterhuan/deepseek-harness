@@ -1,0 +1,6 @@
+# Bilingual-pair consistency record (docs/i18n/README.md): the git blob hash of each
+# side as of the last confirmed-consistent state. Both languages carry equal authority;
+# after editing either side, bring the other along and re-record with:
+#   pnpm run verify-translation-pairing --write .agents/notes/implemented/architecture/2026-09-01-game-studio-mode.md
+2026-09-01-game-studio-mode.md: 6bfd41cd5a897e8c86d205199e51e7f7785f6733
+2026-09-01-game-studio-mode.zh.md: fcf85364c55599d8c68b123c32ff6568ee4449f8

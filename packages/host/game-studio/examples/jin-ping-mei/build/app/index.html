@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>金瓶梅 · 风月总账</title>
+  <style>
+    :root {
+      --bg: #1a1512;
+      --fg: #f3e6d3;
+      --accent: #c9a86c;
+      --muted: #8f7e6b;
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      height: 100%;
+      margin: 0;
+      background: var(--bg);
+      color: var(--fg);
+      font-family: "Noto Serif SC", Georgia, serif;
+    }
+    #app {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100%;
+      padding: 2rem;
+      text-align: center;
+    }
+    h1 { font-weight: 400; margin: 0 0 0.5rem; letter-spacing: 0.2em; }
+    .subtitle { color: var(--muted); margin-bottom: 2rem; }
+    .scene {
+      max-width: 640px;
+      background: rgba(0, 0, 0, 0.25);
+      border: 1px solid rgba(201, 168, 108, 0.25);
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .choices {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      width: 100%;
+      max-width: 360px;
+    }
+    button {
+      background: transparent;
+      border: 1px solid var(--accent);
+      color: var(--accent);
+      padding: 0.6rem 1rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+    button:hover { background: rgba(201, 168, 108, 0.1); }
+    .status { margin-top: 1rem; color: var(--muted); font-size: 0.9rem; }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <h1>金瓶梅 · 风月总账</h1>
+    <p class="subtitle">互动改编示例 · 选择决定去向</p>
+    <div class="scene" id="scene">
+      <p>西门庆在狮子街置下新铺，今日开张，城中各路人马都来道贺。你作为账房先生，要帮西门庆算清三笔账：人情、银钱、风流债。</p>
+    </div>
+    <div class="choices" id="choices">
+      <button data-choice="renqing">先记人情账，拉拢伙计</button>
+      <button data-choice="qiancai">先点银钱，核对库存</button>
+      <button data-choice="fengliu">先赴酒局，探听风声</button>
+    </div>
+    <p class="status" id="status">已就绪 · 等待输入</p>
+  </div>
+  <script>
+    const state = { steps: [], current: 'start' }
+    const scenes = {
+      start: {
+        text: '西门庆在狮子街置下新铺，今日开张，城中各路人马都来道贺。你作为账房先生，要帮西门庆算清三笔账：人情、银钱、风流债。',
+        choices: [
+          { label: '先记人情账，拉拢伙计', next: 'renqing' },
+          { label: '先点银钱，核对库存', next: 'qiancai' },
+          { label: '先赴酒局，探听风声', next: 'fengliu' },
+        ]
+      },
+      renqing: {
+        text: '你把伙计名单按礼数排了座次，西门庆夸你做事稳妥。潘金莲差人送来一坛酒，说是贺新铺。',
+        choices: [
+          { label: '收下酒，记入人情往来', next: 'shoujiu' },
+          { label: '退回酒，只记名不记物', next: 'tuijiu' },
+          { label: '转送李瓶儿，做个顺水人情', next: 'shunshui' },
+        ]
+      },
+      qiancai: {
+        text: '你核对到一半，发现库银少了三十两，伙计吴典恩神色慌张。',
+        choices: [
+          { label: '当场质问，报官查办', next: 'baoguan' },
+          { label: '私下询问，给条退路', next: 'tuilu' },
+          { label: '先瞒下，看西门庆脸色', next: 'manxia' },
+        ]
+      },
+      fengliu: {
+        text: '酒酣耳热，西门庆让你去叫李桂姐。你刚出门，撞见应伯爵在墙根与人嘀咕。',
+        choices: [
+          { label: '假装没听见，继续叫人', next: 'jiazhuang' },
+          { label: '停下脚步，侧耳偷听', next: 'tou ting' },
+          { label: '咳嗽一声，提醒他们', next: 'kesou' },
+        ]
+      },
+      shoujiu: { text: '潘金莲记你一个人情，日后托你递话。结局：人情熟透，银钱渐薄。', choices: [{ label: '重新开始', next: 'start' }] },
+      tuijiu: { text: '你公事公办，西门庆点头，潘金莲冷笑。结局：规矩立住，仇也结下。', choices: [{ label: '重新开始', next: 'start' }] },
+      shunshui: { text: '李瓶儿念你好，潘金莲记你一笔。结局：两头讨好，两头不靠。', choices: [{ label: '重新开始', next: 'start' }] },
+      baoguan: { text: '官差介入，西门庆嫌你张扬。结局：银钱追回，脸面丢尽。', choices: [{ label: '重新开始', next: 'start' }] },
+      tuilu: { text: '吴典恩感激涕零，誓死效忠。结局：少三十两银子，多一条人命。', choices: [{ label: '重新开始', next: 'start' }] },
+      manxia: { text: '你替西门庆兜住，他也替你记下一笔。结局：主子信任，隐患暗藏。', choices: [{ label: '重新开始', next: 'start' }] },
+      jiazhuang: { text: '应伯爵的密谋你没听见，麻烦也没找上门。结局：明哲保身，错失先机。', choices: [{ label: '重新开始', next: 'start' }] },
+      'tou ting': { text: '你听到应伯爵在倒卖西门庆的消息。结局：掌握秘密，也惹上杀身之祸。', choices: [{ label: '重新开始', next: 'start' }] },
+      kesou: { text: '应伯爵哈哈一笑，递给你一包银子。结局：同流合污，再难回头。', choices: [{ label: '重新开始', next: 'start' }] },
+    }
+    function render(key) {
+      state.current = key
+      const scene = scenes[key] ?? scenes.start
+      document.getElementById('scene').innerHTML = `<p>${scene.text}</p>`
+      const choices = document.getElementById('choices')
+      choices.innerHTML = ''
+      scene.choices.forEach(choice => {
+        const btn = document.createElement('button')
+        btn.textContent = choice.label
+        btn.onclick = () => { state.steps.push(choice.next); render(choice.next) }
+        choices.appendChild(btn)
+      })
+      document.getElementById('status').textContent = `当前节点: ${key} · 已走 ${state.steps.length} 步`
+    }
+    document.addEventListener('DOMContentLoaded', () => render('start'))
+  </script>
+</body>
+</html>

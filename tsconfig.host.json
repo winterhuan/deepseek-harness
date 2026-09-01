@@ -321,11 +321,14 @@
     { "path": "./packages/host/plugin-inventory" },
     { "path": "./packages/llm/plugin-package-inventory-deepseek" },
     { "path": "./packages/host/webserver" },
+    { "path": "./packages/host/game-studio" },
     { "path": "./packages/sdk/client" },
     { "path": "./packages/sdk/protocol" },
     { "path": "./packages/lsp/lsp" },
     { "path": "./packages/lsp/lsp-stdio" },
     { "path": "./packages/lsp/tool-lsp" },
+    { "path": "./packages/client/ui-novel/tsconfig.host.json" },
+    { "path": "./packages/client/ui-drama/tsconfig.host.json" },
     { "path": "./apps/cli" }
   ]
 }

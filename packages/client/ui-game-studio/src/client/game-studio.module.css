@@ -1,0 +1,234 @@
+.view {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  background: var(--dsw-surface-page);
+  color: var(--dsw-text-primary);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--dsw-border-subtle);
+  flex-shrink: 0;
+}
+
+.summary {
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.projectSelect {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--dsw-font-size-sm);
+}
+
+.projectSelect select {
+  min-width: 160px;
+}
+
+.tabs {
+  display: flex;
+  gap: 4px;
+  flex: 1;
+}
+
+.tab {
+  padding: 4px 12px;
+  border-radius: 4px;
+  background: transparent;
+  border: none;
+  color: var(--dsw-text-secondary);
+  cursor: pointer;
+}
+
+.tabActive {
+  background: var(--dsw-surface-active);
+  color: var(--dsw-text-primary);
+}
+
+.action {
+  padding: 4px 12px;
+  border-radius: 4px;
+  border: 1px solid var(--dsw-border-subtle);
+  background: var(--dsw-surface-elevated);
+  color: var(--dsw-text-primary);
+  cursor: pointer;
+}
+
+.body {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  padding: 12px;
+}
+
+.state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  gap: 12px;
+  text-align: center;
+}
+
+.statePrimary {
+  font-weight: 600;
+}
+
+.empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  gap: 8px;
+  text-align: center;
+  padding: 24px;
+}
+
+.previewShell {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  border: 1px solid var(--dsw-border-subtle);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.previewStatus {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background: var(--dsw-surface-elevated);
+  border-bottom: 1px solid var(--dsw-border-subtle);
+  flex-shrink: 0;
+}
+
+.runtimeState {
+  font-size: var(--dsw-font-size-sm);
+  color: var(--dsw-text-secondary);
+}
+
+.previewActions {
+  display: flex;
+  gap: 8px;
+}
+
+.previewShell iframe {
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+  border: none;
+  background: var(--dsw-surface-page);
+}
+
+.focusHint {
+  padding: 6px 12px;
+  text-align: center;
+  font-size: var(--dsw-font-size-xs);
+  color: var(--dsw-text-secondary);
+  background: var(--dsw-surface-elevated);
+  border-top: 1px solid var(--dsw-border-subtle);
+}
+
+.fileBrowser {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 12px;
+  height: 100%;
+  min-height: 0;
+}
+
+.fileList {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  overflow: auto;
+  border: 1px solid var(--dsw-border-subtle);
+  border-radius: 6px;
+  padding: 8px;
+}
+
+.fileRow {
+  text-align: left;
+  padding: 6px 8px;
+  border-radius: 4px;
+  background: transparent;
+  border: none;
+  color: var(--dsw-text-primary);
+  cursor: pointer;
+  font-family: var(--dsw-font-mono);
+  font-size: var(--dsw-font-size-sm);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.fileRow:hover {
+  background: var(--dsw-surface-hover);
+}
+
+.fileRowActive {
+  background: var(--dsw-surface-active);
+}
+
+.fileEditor {
+  border: 1px solid var(--dsw-border-subtle);
+  border-radius: 6px;
+  padding: 12px;
+  overflow: auto;
+  background: var(--dsw-surface-elevated);
+}
+
+.source {
+  margin: 0;
+  font-family: var(--dsw-font-mono);
+  font-size: var(--dsw-font-size-sm);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.qaPanel {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 640px;
+}
+
+.qaChecks {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.qaChecks li {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 12px;
+  border-radius: 4px;
+  background: var(--dsw-surface-elevated);
+}
+
+.pass {
+  color: var(--dsw-success);
+}
+
+.fail {
+  color: var(--dsw-danger);
+}
+
+.notrun {
+  color: var(--dsw-text-tertiary);
+}
