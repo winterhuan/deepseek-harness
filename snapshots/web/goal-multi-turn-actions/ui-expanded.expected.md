@@ -8,6 +8,7 @@
     - img
   - tablist:
     - tab "Chat" [selected]
+    - tab "Novel"
     - tab "Trajectory"
 - navigation "Turn navigation":
   - button "Jump to turn 1"

@@ -6,6 +6,7 @@
     - img
   - tablist:
     - tab "Chat" [selected]
+    - tab "Novel"
     - tab "Trajectory"
 - button "System prompt":
   - img

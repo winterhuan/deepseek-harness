@@ -1,0 +1,183 @@
+/* The novel panel fills the view area: header band, then list + reading pane
+   side by side. Tokens only; layout mirrors the conversation view area. */
+.view {
+  display: flex;
+  overflow: hidden;
+  flex-direction: column;
+  height: 100%;
+  color: var(--dsw-alias-label-primary);
+}
+
+/* Header: summary chips + manual refresh. */
+.header {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  border-bottom: 1px solid var(--dsw-alias-border-l2);
+  font-size: 13px;
+  line-height: 18px;
+}
+
+.summary {
+  flex: 1 1 auto;
+  color: var(--dsw-alias-label-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.action {
+  flex-shrink: 0;
+  padding: 3px 10px;
+  border: 1px solid var(--dsw-alias-border-l2);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--dsw-alias-label-primary);
+  font-size: 12px;
+  line-height: 18px;
+  cursor: pointer;
+}
+
+.action:hover {
+  background: var(--dsw-alias-interactive-bg-hover);
+}
+
+/* Body: two columns, list scrolls independently of the reading pane. */
+.body {
+  display: flex;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  width: 240px;
+  overflow-y: auto;
+  border-right: 1px solid var(--dsw-alias-border-l2);
+  /* Active rows take the l3 rung (elevated): the scroll container rebinds the
+     scrollbar pair to l2 so the thumb matches the surface it rides on. */
+  --dsh-scrollbar-thumb: var(--dsw-alias-scrollbar-bg-l2);
+  --dsh-scrollbar-thumb-hover: var(--dsw-alias-scrollbar-hover-l2);
+}
+
+.tabs {
+  display: flex;
+  flex-shrink: 0;
+  gap: 2px;
+  padding: 8px 8px 4px;
+}
+
+.tab {
+  flex: 1 1 auto;
+  padding: 4px 8px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--dsw-alias-label-secondary);
+  font-size: 12px;
+  line-height: 18px;
+  cursor: pointer;
+}
+
+.tab:hover {
+  background: var(--dsw-alias-interactive-bg-hover);
+}
+
+.tabActive {
+  background: var(--dsw-alias-bg-layer-3);
+  color: var(--dsw-alias-label-primary);
+}
+
+.items {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 4px 8px 12px;
+}
+
+.item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 6px 10px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--dsw-alias-label-primary);
+  text-align: left;
+  font-size: 13px;
+  line-height: 18px;
+  cursor: pointer;
+}
+
+.item:hover {
+  background: var(--dsw-alias-interactive-bg-hover);
+}
+
+.itemActive {
+  background: var(--dsw-alias-bg-layer-3);
+}
+
+.itemMeta {
+  color: var(--dsw-alias-label-dimmed);
+  font-size: 11px;
+  line-height: 16px;
+}
+
+.listEmpty {
+  padding: 12px 10px;
+  color: var(--dsw-alias-label-dimmed);
+  font-size: 12px;
+  line-height: 18px;
+}
+
+/* Reading pane: the document text pre-wrapped like prose. */
+.pane {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-width: 0;
+  overflow-y: auto;
+  padding: 16px 20px;
+  /* Same elevated-run rebind as `.list`: the view file uses the l3 rung for
+     active rows, so every scroll container in it carries the l2 pair. */
+  --dsh-scrollbar-thumb: var(--dsw-alias-scrollbar-bg-l2);
+  --dsh-scrollbar-thumb-hover: var(--dsw-alias-scrollbar-hover-l2);
+}
+
+.prose {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-size: 14px;
+  line-height: 24px;
+}
+
+.truncated {
+  margin-top: 12px;
+  color: var(--dsw-alias-label-dimmed);
+  font-size: 12px;
+  line-height: 18px;
+}
+
+/* Full-area states: loading, failure, and the no-project guidance. */
+.state {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 24px;
+  color: var(--dsw-alias-label-secondary);
+  text-align: center;
+  font-size: 13px;
+  line-height: 20px;
+}
+
+.statePrimary {
+  color: var(--dsw-alias-label-primary);
+}

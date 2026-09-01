@@ -1,0 +1,167 @@
+# The `novelist` agent preset: long-form fiction writing.
+#
+# Composition rules mirror the `standard` preset: this is an AGENT-PLANE file,
+# mounted once under a standing scope; every session naming it joins by scope
+# parentage. A service row here MUST sit inside a group carrying an `isolate`
+# realm (see `standard` for the full realm rationale).
+#
+# Choices relative to `standard`:
+# - The persona carries the novelist identity, the five-stage writing workflow,
+#   and the on-disk project conventions (outline.md / characters/ / chapters/
+#   .novel/board.json).
+# - `novel-tools` is a preset-relative file plugin (zero npm imports) providing
+#   the project scaffold and the board state tools.
+# - `skill-filesystem` points `customSkillDirs` at this preset's own `skills/`
+#   so the six craft skills travel with the preset directory (same pattern the
+#   `cordis` preset uses).
+# - The planning and delegation groups are dropped: plan-mode semantics and
+#   subagent/workflow orchestration are engineering loops, not writing ones.
+
+# ── identity ────────────────────────────────────────────────────────────────
+
+# The preset's own persona, shadowing the deployment default for this agent.
+# `{{model}}` and `{{cwd}}` resolve from the agent's own route and workspace.
+- id: persona
+  name: '@deepseek-ai/dsh-persona'
+  config:
+    text: >-
+      你是「小说创作模式」下的小说家 Agent，由 {{model}} 模型驱动，工作目录是 {{cwd}}。你与作者协作进行长篇或短篇小说创作，覆盖完整生命周期：选题扫榜、拆文对标、立项、大纲、人物、分章写作、日更、大修、审稿、去 AI 味、导入已有作品与封面简报。每个阶段开始前，先用 skill 工具加载对应技艺 skill（novel-project-setup、novel-market-scan、novel-deconstruct、novel-outline-craft、novel-character-craft、novel-chapter-writing、novel-revision-pass、novel-continuity-audit、novel-review、novel-deslop、novel-import、novel-short-writing、novel-cover），按其中的方法工作。
+
+      作品以文件沉淀在工作目录：outline.md 记录故事前提、卷章结构与各章状态；characters/ 每个重要人物一个小传文件；chapters/ 按 NN-章名.md 保存正文；.novel/board.json 是项目状态板的单一数据来源，只能通过工具读写。追踪协议：novel_track init 建立追踪，逐章变化用 novel_track commit 以事务提交——它会重读正文按 visible_chars_v1 口径计字数并校验字数带（内带 ±12%、用户带 ±15%，带外需作者显式接受），成功后状态修订号 +1 并重建全部派生视图（.novel/上下文.md 七栏续写状态卡、.novel/角色状态/、.novel/伏笔.md、.novel/时间线/作者真相.md 与 读者已知.md、.novel/逐章记录/）。派生视图只由工具生成，绝不手改；手改后用 novel_track check 发现差异，再用 mode=revision 事务整份重建。写前从 .novel/上下文.md 取当前角色、活跃伏笔与下一章承诺做本节速记，只加载"不知道就会写错"的信息。写作中用 novel_wordcount 做字数 checkpoint（每章至多一次）。作者明确声明的长期写作习惯用 novel_memory record 记录（拿到回执才算记住），写作前用 query 取回。
+
+      写作纪律：设定、时间线与伏笔必须一致——动笔前核对，成稿后立即提交追踪事务；时间线区分作者真相与读者已知，未揭示事件绝不进入读者视图；修订先分全局问题（结构、节奏、人物弧光）与局部问题（措辞、场景收束），全局改动先给方案再动笔。审稿用 novel-review 的多视角对抗模式，可派子代理并行。尊重作者的风格与设定决定，不擅自更改；重大分歧摆出选项交作者裁决。需要事实核验时用 web 工具检索并注明来源。作者可以在 Web 界面的「小说」视图中阅读章节、大纲、人物与全部追踪视图。
+
+- id: agent-instructions
+  name: '@deepseek-ai/dsh-agent-instructions'
+  config:
+    maxBytes: 65536
+
+# ── shell ───────────────────────────────────────────────────────────────────
+
+# Word counts, backups, and bulk file chores for manuscripts. Both consume the
+# host registry; their executors stay host-plane (see `standard`).
+- id: tool-bash
+  name: '@deepseek-ai/dsh-tool-bash'
+  disabled: !!js process.platform === 'win32'
+
+- id: tool-pwsh
+  name: '@deepseek-ai/dsh-tool-pwsh'
+  disabled: !!js process.platform !== 'win32'
+
+# ── filesystem ──────────────────────────────────────────────────────────────
+
+# The writing surface: outline, character sheets, and chapter files. The `fs`
+# service and its policy stay in the host.
+- id: tool-fs
+  name: '@deepseek-ai/dsh-tool-fs'
+
+- id: tool-fs-search
+  name: '@deepseek-ai/dsh-tool-fs-search'
+  config:
+    sampleOverCapGlobResults: false
+
+# ── background jobs ────────────────────────────────────────────────────────
+
+# Model-facing controls so `tool-bash` `run_in_background` results stay
+# collectable; the task registry is host-plane (see `standard`).
+- id: tool-jobs
+  name: '@deepseek-ai/dsh-tool-jobs'
+
+# ── skills ──────────────────────────────────────────────────────────────────
+
+# `customSkillDirs` adds this preset's own `skills/` directory, so the six
+# craft skills load from the preset itself. The merged catalog also carries
+# whatever the deployment registered globally.
+- id: skill-filesystem
+  name: '@deepseek-ai/dsh-skill-filesystem'
+  config:
+    customSkillDirs:
+      - !!js "process.getBuiltinModule('node:url').fileURLToPath(new URL('skills/', baseUrl))"
+
+- id: tool-skill
+  name: '@deepseek-ai/dsh-tool-skill'
+
+# ── goals ───────────────────────────────────────────────────────────────────
+
+# Long writing objectives ("finish volume three") continue across rounds; the
+# goal service and session driver stay host-plane.
+- id: command-goal
+  name: '@deepseek-ai/dsh-command-goal'
+
+- id: tool-goal
+  name: '@deepseek-ai/dsh-tool-goal'
+
+# ── project tools ───────────────────────────────────────────────────────────
+
+# Preset-relative file plugin: scaffold + board state. Zero npm imports by
+# design — the preset directory ships no node_modules.
+- id: novel-tools
+  name: ./plugins/novel-tools.js
+
+# ── delegation ──────────────────────────────────────────────────────────────
+
+# The subagents registry lives in the HOST composition (see `standard` for the
+# realm rationale); this preset contributes the delegation TOOLS so the
+# multi-perspective review (novel-review) can spawn its four role perspectives
+# in parallel, and long deconstruction pipelines can fan per-chapter work out.
+- id: delegation
+  name: cordis:group
+  group: true
+  isolate:
+    workflowEngine: true
+  config:
+    - id: tool-subagent-control
+      name: '@deepseek-ai/dsh-tool-subagent-control'
+
+    - id: tool-subagent-list-agents
+      name: '@deepseek-ai/dsh-tool-subagent-control/list-agents'
+
+    - id: tool-subagent
+      name: '@deepseek-ai/dsh-tool-subagent'
+      config:
+        provider: spawn
+        toolName: subagent
+        modelSelectionSettings: true
+        backgroundMode: continuable
+
+# ── compaction ──────────────────────────────────────────────────────────────
+
+# `compaction-basic` reads `toolResultPrune` through `ctx.get`, so the pruner
+# must share this realm rather than sit outside it (see `standard`).
+- id: compaction
+  name: cordis:group
+  group: true
+  isolate:
+    compaction: true
+    toolResultPruner: true
+  config:
+    - id: compaction-basic
+      name: '@deepseek-ai/dsh-compaction-basic'
+
+    - id: command-compact
+      name: '@deepseek-ai/dsh-command-compact'
+
+    - id: tool-result-pruner
+      name: '@deepseek-ai/dsh-compaction-tool-result-pruner'
+      config:
+        thresholdChars: 8192
+        headChars: 4096
+        tailChars: 1024
+
+# ── remaining model-facing rows ─────────────────────────────────────────────
+
+- id: tool-ask-user
+  name: '@deepseek-ai/dsh-tool-ask-user'
+
+- id: tool-todo
+  name: '@deepseek-ai/dsh-tool-todo'
+  config:
+    allowParallelInProgress: true
+
+# The `web` service and its search provider stay in the host composition; only
+# the model-facing tool is per-session.
+- id: tool-web
+  name: '@deepseek-ai/dsh-tool-web'
+  config:
+    fetch: true
+    searchTimeoutMs: 60000

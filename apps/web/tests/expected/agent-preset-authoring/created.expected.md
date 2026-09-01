@@ -61,6 +61,16 @@
       - 'button "复制: 创造模式"':
         - img
         - text: 复制
+    - listitem:
+      - 'button "设为默认: 小说创作模式"':
+        - text: 小说创作模式 内置 长篇小说创作模式：扫榜选题、拆文、立项、大纲、人物、分章写作、追踪协议（角色快照/伏笔/双时间线/续写状态卡）、日更、修订、多视角审稿、去 AI 味、导入已有作品与封面简报，配 Web 阅读视图。
+        - code: novelist
+      - 'button "查看: 小说创作模式"':
+        - img
+        - text: 查看
+      - 'button "复制: 小说创作模式"':
+        - img
+        - text: 复制
   - heading "自定义" [level=3]
   - list:
     - listitem:

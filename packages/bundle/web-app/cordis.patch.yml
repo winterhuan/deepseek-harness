@@ -232,6 +232,11 @@
     - id: ui-deliverables
       name: '@deepseek-ai/dsh-client-ui-deliverables'
 
+    # Novel-writing mode reading panel: the 「小说」 conversation view over
+    # the novelist preset's workspace conventions.
+    - id: ui-novel
+      name: '@deepseek-ai/dsh-client-ui-novel'
+
 
     - id: ui-workspace
       name: '@deepseek-ai/dsh-client-ui-workspace'

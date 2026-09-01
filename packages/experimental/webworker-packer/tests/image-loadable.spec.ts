@@ -41,6 +41,25 @@ const WEB_SERVER = '@deepseek-ai/dsh-host-webserver'
 
 const workspaces = indexWorkspacePackages(repoRoot)
 
+describe('the roster scan', () => {
+  it('leaves preset-relative file rows out of the packed dependency roster', () => {
+    const result = packVfsImage({
+      config: [
+        '- id: subject',
+        `  name: '${SUBJECT}'`,
+        '- id: preset-tools',
+        "  name: './plugins/novel-tools.js'",
+      ].join('\n'),
+      profile: 'preset-relative-row-check',
+      workspaces,
+      resolveFrom: repoRoot,
+      entries: [],
+    })
+    expect(result.roster).toEqual([SUBJECT])
+    expect(result.missing).toEqual([])
+  })
+})
+
 describe('preview example overlays', () => {
   it('packs source-looking paths and dot directories into a separate overlay', () => {
     const fixture = previewFixtures(repoRoot)[0]
