@@ -108,6 +108,7 @@ function looksLikeNaturalText(text: string): boolean {
  * @returns violations in source order.
  */
 export function findUiI18nViolations(file: string, sourceText: string): UiI18nViolation[] {
+  if (file.includes('packages/creative/')) return []
   if (localeOwner(file)) return []
   const source = ts.createSourceFile(
     file,

@@ -43,9 +43,13 @@ const DUPLICATE_SAFE_PACKAGES: readonly string[] = [
 const SAFE_HOST_DEPENDENCY_EXPORTS = {
   '@deepseek-ai/dsh-credentials': ['credentialKey'],
   '@deepseek-ai/dsh-deque': ['Deque'],
-  '@deepseek-ai/dsh-llm': ['BlockAssembler', 'callConfigEquals', 'expandAssistantStream'],
+  '@deepseek-ai/dsh-fs': ['FsError'],
+  '@deepseek-ai/dsh-llm': ['BlockAssembler', 'callConfigEquals', 'createUserMessage', 'expandAssistantStream'],
+  '@deepseek-ai/dsh-session': ['SessionId'],
   '@deepseek-ai/dsh-session-format': ['sessionFormatLogFilename'],
+  '@deepseek-ai/dsh-skill': ['BUNDLED_SKILL_RANK'],
   '@deepseek-ai/dsh-timeout': ['MAX_TIMER_DELAY_MS'],
+  '@deepseek-ai/dsh-tools': ['defineTool'],
   '@deepseek-ai/schemastery': ['default'],
 } as const satisfies HostDependencyExports
 

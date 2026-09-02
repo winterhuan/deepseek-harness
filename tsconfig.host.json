@@ -337,6 +337,7 @@
     { "path": "./packages/lsp/lsp" },
     { "path": "./packages/lsp/lsp-stdio" },
     { "path": "./packages/lsp/tool-lsp" },
+    { "path": "./packages/creative/creative/tsconfig.host.json" },
     { "path": "./apps/cli" }
   ]
 }
