@@ -473,6 +473,125 @@ export interface Config {
 
 Source: [`packages/extensions/cordis-host-runner/src/index.ts:88`](../packages/extensions/cordis-host-runner/src/index.ts)
 
+<a id="deepseek-aidsh-creative"></a>
+
+## `@deepseek-ai/dsh-creative`
+
+Requires: `skills` · `subagents` · `tools` · `typert` · `webServer`
+
+```ts config-catalog
+/** DSH owns models, providers, presets, permissions, roots, runs, and sessions. */
+export interface Config {
+  /** Largest creative file the workbench reads or writes, in bytes. */
+  readonly editorMaxBytes?: number
+  /** Extra non-loopback host authorities allowed to reach the workbench routes. */
+  readonly trustedHosts?: string[]
+  /** Production runtime profile seeding the creative-produce settings namespace. */
+  readonly produce?: ProduceConfig
+}
+
+/**
+ * Deployment profile for the pinned creative production scripts. Secret values
+ * never enter this section: each `*ApiKeyEnv` names one or more credential
+ * references (comma-separated for rotation) the scripts' environment variable
+ * resolves through, following the model provider pattern. Non-secret model,
+ * endpoint, and polling choices live here so a deployment changes them
+ * without editing host environment files.
+ */
+export interface ProduceConfig {
+  /**
+   * Credential references for the image key, comma-separated for rotation; a stored value may itself hold
+   * newline-separated keys for bulk pools.
+   * defaults to OPENAI_API_KEY.
+   */
+  readonly openaiApiKeyEnv?: string
+  /**
+   * Credential references for the Seedance key, comma-separated for rotation; a stored value may itself hold
+   * newline-separated keys for bulk pools.
+   * defaults to ARK_API_KEY.
+   */
+  readonly arkApiKeyEnv?: string
+  /**
+   * Credential references for the MiniMax key, comma-separated for rotation; a stored value may itself hold
+   * newline-separated keys for bulk pools.
+   * defaults to MINIMAX_API_KEY.
+   */
+  readonly minimaxApiKeyEnv?: string
+  /**
+   * Credential references for the MiMo key, comma-separated for rotation; a stored value may itself hold
+   * newline-separated keys for bulk pools.
+   * defaults to MIMO_API_KEY.
+   */
+  readonly mimoApiKeyEnv?: string
+  /**
+   * Credential references for the Fish key, comma-separated for rotation; a stored value may itself hold
+   * newline-separated keys for bulk pools.
+   * defaults to FISH_API_KEY.
+   */
+  readonly fishApiKeyEnv?: string
+  /**
+   * Credential references for the Agnes key, comma-separated for rotation; a stored value may itself hold
+   * newline-separated keys for bulk pools.
+   * defaults to AGNES_API_KEY.
+   */
+  readonly agnesApiKeyEnv?: string
+  /** Image endpoint override; blank inherits the adapter default. */
+  readonly openaiBaseUrl?: string
+  /** MiniMax music endpoint override; blank inherits the adapter default. */
+  readonly minimaxBaseUrl?: string
+  /** MiniMax video endpoint override; blank inherits the adapter default. */
+  readonly minimaxVideoBaseUrl?: string
+  /** Seedance endpoint override; blank inherits the adapter default. */
+  readonly seedanceBaseUrl?: string
+  /** MiMo endpoint override; blank inherits the adapter default. */
+  readonly mimoApiUrl?: string
+  /** Exact enabled Seedance model or endpoint id; the adapter defines no default. */
+  readonly seedanceModel?: string
+  /** Exact enabled MiniMax video model id; the adapter defines no default. */
+  readonly minimaxVideoModel?: string
+  /** Resolutions the MiniMax video model accepts, e.g. 768P. */
+  readonly minimaxVideoResolutions?: string
+  /** Minimum whole-second duration the MiniMax video model accepts. */
+  readonly minimaxVideoMinDuration?: number
+  /** Maximum whole-second duration the MiniMax video model accepts. */
+  readonly minimaxVideoMaxDuration?: number
+  /** Ratios the MiniMax video model accepts, e.g. 9:16,16:9. */
+  readonly minimaxVideoRatios?: string
+  /** Ratios the Seedance model accepts, e.g. 9:16,16:9. */
+  readonly seedanceAllowedRatios?: string
+  /** Minimum whole-second duration the Seedance model accepts. */
+  readonly seedanceMinDuration?: number
+  /** Maximum whole-second duration the Seedance model accepts. */
+  readonly seedanceMaxDuration?: number
+  /** Seconds between MiniMax video status polls. */
+  readonly minimaxVideoPollInterval?: number
+  /** Seconds before a MiniMax video run times out. */
+  readonly minimaxVideoTimeoutSeconds?: number
+  /** Seconds between Seedance status polls. */
+  readonly seedancePollInterval?: number
+  /** Seconds before a Seedance run times out. */
+  readonly seedanceTimeoutSeconds?: number
+  /** Speech provider routing: auto, mimo-tts, or fish-audio. */
+  readonly ttsProvider?: string
+  /** MiMo model override; blank inherits the adapter default. */
+  readonly mimoModel?: string
+  /** MiMo narration voice; blank inherits the adapter default. */
+  readonly mimoTtsVoice?: string
+  /** Agnes endpoint override; blank inherits the adapter default. */
+  readonly agnesBaseUrl?: string
+  /** Exact Agnes image model id; blank uses agnes-image-2.5-flash. */
+  readonly agnesImageModel?: string
+  /** Exact Agnes video model id: agnes-video-2.5-flash (free) or agnes-video-2.5 (billed). */
+  readonly agnesVideoModel?: string
+  /** Seconds between Agnes video status polls. */
+  readonly agnesVideoPollInterval?: number
+  /** Seconds before an Agnes video run times out. */
+  readonly agnesVideoTimeoutSeconds?: number
+}
+```
+
+Source: [`packages/creative/creative/src/index.ts:30`](../packages/creative/creative/src/index.ts)
+
 <a id="deepseek-aidsh-credentials-local"></a>
 
 ## `@deepseek-ai/dsh-credentials-local`
@@ -2501,7 +2620,7 @@ export interface Config {
 }
 ```
 
-Source: [`packages/core/system-prompt/src/index.ts:237`](../packages/core/system-prompt/src/index.ts)
+Source: [`packages/core/system-prompt/src/index.ts:240`](../packages/core/system-prompt/src/index.ts)
 
 <a id="deepseek-aidsh-terminal-bash"></a>
 

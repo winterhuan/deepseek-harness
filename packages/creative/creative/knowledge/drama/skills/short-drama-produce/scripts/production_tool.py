@@ -1061,8 +1061,16 @@ def _validate_stored_job(
         or source is None
     ):
         raise ValueError("stored job source entry is invalid")
-    expected_entry_prefix = {"image": "IMG-", "video": "MOTION-"}.get(
-        str(modality)
+    # The entry prefix depends on the entry's own document, exactly like
+    # prepare: a frozen storyboard keyframe (SHOT-) is a producible image, so
+    # a per-modality table would refuse the storyboard image jobs prepare
+    # already accepted.
+    expected_entry_prefix = (
+        CREATOR_SOURCE_ENTRIES[PurePosixPath(str(source)).name][0]
+        if source is not None
+        and PurePosixPath(str(source)).name in CREATOR_SOURCE_ENTRIES
+        and _canonical_creator_source_modality(str(source)) == modality
+        else None
     )
     if source_entry is not None and (
         expected_entry_prefix is None

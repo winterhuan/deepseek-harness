@@ -18,6 +18,12 @@
       "path": "../../core/agent"
     },
     {
+      "path": "../../credentials/credentials"
+    },
+    {
+      "path": "../../jobs/jobs"
+    },
+    {
       "path": "../../fs/fs"
     },
     {
@@ -46,6 +52,15 @@
     },
     {
       "path": "../../core/session"
+    },
+    {
+      "path": "../../settings/settings"
+    },
+    {
+      "path": "../../shell/shell"
+    },
+    {
+      "path": "../../util/launch-environment"
     }
   ]
 }

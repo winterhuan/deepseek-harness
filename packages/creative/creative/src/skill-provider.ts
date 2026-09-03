@@ -50,7 +50,7 @@ const DSH_DRAMA_BRIDGE = [
 ].join('\n')
 const DSH_DRAMA_OVERRIDES: Readonly<Partial<Record<string, string>>> = {
   'short-drama': 'A dashboard request means focus or use the native 短剧 tab in this DSH Session. Do not run the bundled standalone Dashboard script. New projects follow only the v0.6 creator-first contract and create only documents required by the current request.',
-  'short-drama-produce': 'Use an upstream adapter only after the creator explicitly confirms the exact current job. Its source must be the current creator-first Markdown and its output belongs under 剧集/<EP>/制作成果/. DSH permissions and approval UI remain authoritative. When creative_production is visible, register the previewed job with track_job after the confirmation is valid and before run — never at prepare time — passing the same job ID, target, modality and count the creator just approved.',
+  'short-drama-produce': 'Use an upstream adapter only after the creator explicitly confirms the exact current job. Its source must be the current creator-first Markdown and its output belongs under 剧集/<EP>/制作成果/. DSH permissions and approval UI remain authoritative. When creative_production is visible, register the previewed job with track_job after the confirmation is valid and before run — never at prepare time — passing the same job ID, target, modality and count the creator just approved. Run the confirmed job only through creative_produce_run with entry drama and the confirmed adapter, passing the job document on stdin: subprocess children start credential-scrubbed, so invoking provider_adapters.py through bash never receives the configured keys. Agnes image and video run through the agnes-image and agnes-video adapters on the same confirmed-job path; the flash video model is free while agnes-video-2.5 bills per second, so confirm the model together with the job. A storyboard frozen keyframe (SHOT-) is a valid image source: confirm accepts it exactly like prepare does.',
   'short-drama-assets': 'Keep one stable `- ID：VISUAL-*` line on every 人物/造型/地点/道具/状态 entry in 视觉设定.md, and never change an existing ID when editing its heading or text. The 生产 view identifies canvas nodes by that ID; entries without one still render, but the workbench reports their node identity as unstable.',
 }
 const DSH_GAME_BRIDGE = [
@@ -71,7 +71,7 @@ const DSH_VIDEO_BRIDGE = [
   'Never start a second Agent runtime, dashboard, session transport, web server, polling loop, or model configuration.',
   'Keep the complete upstream six-Skill pipeline. Put each project under video-recaps/<project>/, copy or import source media under sources/, and use work/ as the upstream work_dir so the Studio can discover authoritative manifests and outputs.',
   'The Video Studio is a preview and artifact surface, not a nonlinear editor. Do not invent a second project-state format, timeline truth, or render queue; recap_run_manifest.json, recap_phase.json, timeline.json, assembly_manifest.json, and the upstream artifacts remain authoritative.',
-  'MIMO_API_KEY, FISH_API_KEY, and voice credentials stay in the host environment. Never write secrets into project files, tool arguments shown to the browser, or chat output.',
+  'MIMO_API_KEY, FISH_API_KEY, and voice credentials resolve from the creative-produce profile and the credential store. Never write secrets into project files, tool arguments shown to the browser, or chat output. Run the pinned scripts only through creative_produce_run (entries video-voiceover, video-recap, video-doctor): subprocess children start credential-scrubbed, so invoking them through bash never receives the configured keys.',
   'Use only DSH-visible tools and approvals. Run Python and ffmpeg through the current DSH execution world, preserve cancellation, and do not install or upgrade system dependencies without explicit user approval.',
   'When a new edited or final video is ready, tell the user that Video Studio can load it; never interrupt playback by replacing the currently loaded video silently.',
   '</video-recap-dsh-integration>',
@@ -93,7 +93,7 @@ const DSH_NATIVE_SKILLS: Readonly<Partial<Record<string, string>>> = {
   工作区级 .story/作者记忆/；工具未返回 Author Memory Receipt 前不得声称已记住。
 
 意图明确时直接进入对应 Skill；不明确时只问一个会改变流程的问题。项目文件、
-Agent、模型、权限、Session Log 和 UI 均由当前 DSH 会话管理。小说文件通过“小说”
+Agent、模型、权限、Session Log 和 UI 均由当前 DSH 会话管理。小说文件通过"小说"
 视图查看，Agent 过程通过右侧动态栏或官方 Chat 查看。禁止启动独立 Dashboard。`,
   'story-setup': `# story-setup — DSH 原生小说工程初始化
 

@@ -20,6 +20,12 @@
       "path": "../../core/agent"
     },
     {
+      "path": "../../credentials/credentials"
+    },
+    {
+      "path": "../../jobs/jobs"
+    },
+    {
       "path": "../../core/session"
     },
     {
@@ -75,6 +81,15 @@
     },
     {
       "path": "../../api/session-controller/tsconfig.client.json"
+    },
+    {
+      "path": "../../settings/settings"
+    },
+    {
+      "path": "../../shell/shell"
+    },
+    {
+      "path": "../../util/launch-environment"
     }
   ]
 }

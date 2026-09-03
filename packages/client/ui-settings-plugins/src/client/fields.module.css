@@ -73,6 +73,28 @@
   cursor: default;
 }
 
+/* One provider's bulk key dialog opener, visually quiet beside its SecretField. */
+.manage {
+  display: block;
+  margin: 2px 0 0;
+  border: none;
+  background: none;
+  padding: 0;
+  font: inherit;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--dsw-alias-label-secondary);
+  cursor: pointer;
+}
+
+.manage:hover:not(:disabled) {
+  color: var(--dsw-alias-label-primary);
+}
+
+.manage:disabled {
+  cursor: default;
+}
+
 .input {
   height: 34px;
   padding: 0 12px;
@@ -112,4 +134,23 @@
   font-size: 12px;
   line-height: 1.5;
   color: var(--dsw-alias-label-tertiary);
+}
+
+/* One provider's key, endpoint, and model controls sharing a heading. */
+.group {
+  margin: 0;
+  padding: 12px 0 0;
+}
+
+.group + .group {
+  margin-top: 12px;
+  border-top: 1px solid var(--dsw-alias-border-l2);
+}
+
+.groupTitle {
+  margin: 0 0 4px;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1.5;
+  color: var(--dsw-alias-label-primary);
 }

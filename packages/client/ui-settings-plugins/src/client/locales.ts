@@ -17,6 +17,25 @@ export type PluginsSettingsLocaleKey =
   | 'subagentModelSelectionPartial' | 'subagentModelSelectionUnavailable'
   | 'subagentModelSelectionUnavailableGroup' | 'subagentModelSelectionEmpty'
   | 'subagentModelSelectionRequired' | 'subagentModelSelectionConflict' | 'subagentModelSelectionOff'
+  | 'produceTitle' | 'produceDescription' | 'produceKeySet' | 'produceKeyUnset'
+  | 'produceGroupOpenai' | 'produceGroupSeedance' | 'produceGroupMinimax'
+  | 'produceGroupMimo' | 'produceGroupFish' | 'produceGroupAgnes' | 'produceGroupVoice'
+  | 'produceOpenaiKeyLabel' | 'produceOpenaiKeyHint'
+  | 'produceArkKeyLabel' | 'produceArkKeyHint'
+  | 'produceMinimaxKeyLabel' | 'produceMinimaxKeyHint'
+  | 'produceMimoKeyLabel' | 'produceMimoKeyHint'
+  | 'produceFishKeyLabel' | 'produceFishKeyHint'
+  | 'produceAgnesKeyLabel' | 'produceAgnesKeyHint'
+  | 'produceSeedanceModel' | 'produceSeedanceModelHint'
+  | 'produceMinimaxVideoModel' | 'produceMinimaxVideoModelHint'
+  | 'produceOpenaiBaseUrl' | 'produceMinimaxBaseUrl' | 'produceMinimaxVideoBaseUrl'
+  | 'produceSeedanceBaseUrl' | 'produceMimoApiUrl' | 'produceBaseUrlHint'
+  | 'produceAgnesBaseUrl' | 'produceAgnesImageModel' | 'produceAgnesImageModelHint'
+  | 'produceAgnesVideoModel' | 'produceAgnesVideoModelHint'
+  | 'produceManageKeys' | 'produceKeysDialogDescription' | 'produceKeysDialogPlaceholder'
+  | 'produceKeysCount' | 'produceKeysClear' | 'produceKeysCloseLabel'
+  | 'produceTtsProvider' | 'produceTtsProviderHint'
+  | 'produceMimoModel' | 'produceMimoTtsVoice' | 'produceModelHint'
 
 /** English copy. */
 export const en: Record<PluginsSettingsLocaleKey, string> = {
@@ -72,6 +91,55 @@ export const en: Record<PluginsSettingsLocaleKey, string> = {
   subagentModelSelectionRequired: 'Select at least one model before saving.',
   subagentModelSelectionConflict: 'Settings changed elsewhere. Discard your draft and try again.',
   subagentModelSelectionOff: 'Subagents use configured defaults or inherit the parent agent\'s model. Saved model choices are retained.',
+  produceTitle: 'Creative production',
+  produceDescription: 'Keys and runtime profile for short-drama and video production.',
+  produceKeySet: 'A key is configured.',
+  produceKeyUnset: 'No key is configured.',
+  produceGroupOpenai: 'OpenAI (image)',
+  produceGroupSeedance: 'Seedance video (Volcengine Ark)',
+  produceGroupMinimax: 'MiniMax (video and music)',
+  produceGroupMimo: 'MiMo (video understanding and voice)',
+  produceGroupFish: 'Fish Audio (voice fallback)',
+  produceGroupAgnes: 'Agnes (image and video)',
+  produceGroupVoice: 'Voice routing',
+  produceOpenaiKeyLabel: 'OpenAI API key (image)',
+  produceOpenaiKeyHint: 'Stored outside the settings file. Leave blank to keep the current key. Separate multiple references with commas to rotate across keys, failing over on authentication or rate-limit errors.',
+  produceArkKeyLabel: 'Volcengine Ark API key (Seedance video)',
+  produceArkKeyHint: 'Stored outside the settings file. Leave blank to keep the current key. Separate multiple references with commas to rotate across keys, failing over on authentication or rate-limit errors.',
+  produceMinimaxKeyLabel: 'MiniMax API key (video and music)',
+  produceMinimaxKeyHint: 'Stored outside the settings file. Leave blank to keep the current key. Separate multiple references with commas to rotate across keys, failing over on authentication or rate-limit errors.',
+  produceMimoKeyLabel: 'MiMo API key (video understanding and voice)',
+  produceMimoKeyHint: 'Stored outside the settings file. Leave blank to keep the current key. Separate multiple references with commas to rotate across keys, failing over on authentication or rate-limit errors.',
+  produceFishKeyLabel: 'Fish Audio API key (voice fallback)',
+  produceFishKeyHint: 'Stored outside the settings file. Leave blank to keep the current key. Separate multiple references with commas to rotate across keys, failing over on authentication or rate-limit errors.',
+  produceAgnesKeyLabel: 'Agnes API key (image and video)',
+  produceAgnesKeyHint: 'Stored outside the settings file. Leave blank to keep the current key. Separate multiple references with commas to rotate across keys, failing over on authentication or rate-limit errors.',
+  produceSeedanceModel: 'Seedance model',
+  produceSeedanceModelHint: 'The exact enabled Seedance model or endpoint id; the adapter defines no default.',
+  produceMinimaxVideoModel: 'MiniMax video model',
+  produceMinimaxVideoModelHint: 'The exact enabled MiniMax video model id; the adapter defines no default.',
+  produceOpenaiBaseUrl: 'OpenAI endpoint',
+  produceMinimaxBaseUrl: 'MiniMax endpoint',
+  produceMinimaxVideoBaseUrl: 'MiniMax video endpoint',
+  produceSeedanceBaseUrl: 'Seedance endpoint',
+  produceMimoApiUrl: 'MiMo endpoint',
+  produceAgnesBaseUrl: 'Agnes endpoint',
+  produceBaseUrlHint: 'Leave blank to use the adapter default.',
+  produceTtsProvider: 'Speech provider',
+  produceTtsProviderHint: 'auto, mimo-tts, or fish-audio. Leave blank for auto.',
+  produceMimoModel: 'MiMo model',
+  produceMimoTtsVoice: 'MiMo narration voice',
+  produceModelHint: 'Leave blank to use the adapter default.',
+  produceAgnesImageModel: 'Agnes image model',
+  produceAgnesImageModelHint: 'Leave blank to use agnes-image-2.5-flash.',
+  produceAgnesVideoModel: 'Agnes video model',
+  produceAgnesVideoModelHint: 'agnes-video-2.5-flash is free; agnes-video-2.5 bills per second.',
+  produceManageKeys: 'Manage keys in bulk',
+  produceKeysDialogDescription: 'One key per line; thousands of lines are fine. Saving replaces every key under this reference.',
+  produceKeysDialogPlaceholder: 'Paste one key per line',
+  produceKeysCount: 'Valid keys: ',
+  produceKeysClear: 'Clear',
+  produceKeysCloseLabel: 'Close the bulk key dialog',
 }
 
 /** Simplified Chinese copy. */
@@ -128,4 +196,53 @@ export const zh: Record<PluginsSettingsLocaleKey, string> = {
   subagentModelSelectionRequired: '保存前请至少选择一个模型。',
   subagentModelSelectionConflict: '设置已在其他位置更新。请放弃修改后重试。',
   subagentModelSelectionOff: '关闭后，Subagent 使用配置的默认模型或继承父 Agent 的模型；已选模型会保留。',
+  produceTitle: '创意生产',
+  produceDescription: '短剧与视频生产的密钥与运行时配置。',
+  produceKeySet: '已配置密钥。',
+  produceKeyUnset: '未配置密钥。',
+  produceGroupOpenai: 'OpenAI（图片）',
+  produceGroupSeedance: 'Seedance 视频（火山引擎 Ark）',
+  produceGroupMinimax: 'MiniMax（视频与音乐）',
+  produceGroupMimo: 'MiMo（视频理解与语音）',
+  produceGroupFish: 'Fish Audio（语音兜底）',
+  produceGroupAgnes: 'Agnes（图片与视频）',
+  produceGroupVoice: '语音路由',
+  produceOpenaiKeyLabel: 'OpenAI API Key（图片）',
+  produceOpenaiKeyHint: '不写入设置文件。留空表示保持当前密钥。多个引用用英文逗号分隔，按顺序轮询，遇鉴权或限流失败自动换下一个。',
+  produceArkKeyLabel: '火山引擎 Ark API Key（Seedance 视频）',
+  produceArkKeyHint: '不写入设置文件。留空表示保持当前密钥。多个引用用英文逗号分隔，按顺序轮询，遇鉴权或限流失败自动换下一个。',
+  produceMinimaxKeyLabel: 'MiniMax API Key（视频与音乐）',
+  produceMinimaxKeyHint: '不写入设置文件。留空表示保持当前密钥。多个引用用英文逗号分隔，按顺序轮询，遇鉴权或限流失败自动换下一个。',
+  produceMimoKeyLabel: 'MiMo API Key（视频理解与语音）',
+  produceMimoKeyHint: '不写入设置文件。留空表示保持当前密钥。多个引用用英文逗号分隔，按顺序轮询，遇鉴权或限流失败自动换下一个。',
+  produceFishKeyLabel: 'Fish Audio API Key（语音兜底）',
+  produceFishKeyHint: '不写入设置文件。留空表示保持当前密钥。多个引用用英文逗号分隔，按顺序轮询，遇鉴权或限流失败自动换下一个。',
+  produceAgnesKeyLabel: 'Agnes API Key（图片与视频）',
+  produceAgnesKeyHint: '不写入设置文件。留空表示保持当前密钥。多个引用用英文逗号分隔，按顺序轮询，遇鉴权或限流失败自动换下一个。',
+  produceSeedanceModel: 'Seedance 模型',
+  produceSeedanceModelHint: '已启用的 Seedance 模型或端点 ID（必填，适配器不设默认值）。',
+  produceMinimaxVideoModel: 'MiniMax 视频模型',
+  produceMinimaxVideoModelHint: '已启用的 MiniMax 视频模型 ID（必填，适配器不设默认值）。',
+  produceOpenaiBaseUrl: 'OpenAI 接口地址',
+  produceMinimaxBaseUrl: 'MiniMax 接口地址',
+  produceMinimaxVideoBaseUrl: 'MiniMax 视频接口地址',
+  produceSeedanceBaseUrl: 'Seedance 接口地址',
+  produceMimoApiUrl: 'MiMo 接口地址',
+  produceAgnesBaseUrl: 'Agnes 接口地址',
+  produceBaseUrlHint: '留空则使用适配器默认地址。',
+  produceTtsProvider: '语音提供方',
+  produceTtsProviderHint: 'auto、mimo-tts 或 fish-audio。留空表示 auto。',
+  produceMimoModel: 'MiMo 模型',
+  produceMimoTtsVoice: 'MiMo 解说声音',
+  produceModelHint: '留空则使用适配器默认值。',
+  produceAgnesImageModel: 'Agnes 图片模型',
+  produceAgnesImageModelHint: '留空则使用 agnes-image-2.5-flash。',
+  produceAgnesVideoModel: 'Agnes 视频模型',
+  produceAgnesVideoModelHint: 'agnes-video-2.5-flash 免费；agnes-video-2.5 按秒计费。',
+  produceManageKeys: '批量管理密钥',
+  produceKeysDialogDescription: '每行一个密钥，可粘贴上万行。保存后覆盖该引用下全部密钥。',
+  produceKeysDialogPlaceholder: '每行粘贴一个密钥',
+  produceKeysCount: '有效密钥：',
+  produceKeysClear: '清空',
+  produceKeysCloseLabel: '关闭批量密钥弹框',
 }

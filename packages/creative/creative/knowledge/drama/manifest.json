@@ -485,8 +485,8 @@
     },
     {
       "path": "skills/short-drama-produce/scripts/production_tool.py",
-      "sha256": "6b13682f4769495ee1cddb678651c48572623a1480c070d1b2565262761388df",
-      "bytes": 77848
+      "sha256": "635d8bf72ed68af00ac273de0163b2e6a3f010ffb5cbf8a5e3a7a554f313a7de",
+      "bytes": 78291
     },
     {
       "path": "skills/short-drama-produce/scripts/provider_adapters.py",
