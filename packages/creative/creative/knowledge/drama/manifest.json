@@ -1048,5 +1048,19 @@
       "sha256": "93ea401dbfc042a0c4f1accdd26c1e8ddc3fea29b10733b8236cd6b14b10b480",
       "bytes": 9907
     }
-  ]
+  ],
+  "governance": "Upstream snapshot; files[] is the upstream record. Paths listed under divergence are DSH-owned: forked files were modified (see reason), added files are DSH-authored. See .agents/notes/implemented/process/2026-09-05-knowledge-divergence-governance.md.",
+  "divergence": {
+    "forked": {
+      "skills/short-drama-produce/scripts/production_tool.py": {
+        "reason": "confirm entry-prefix lookup follows the per-document table like prepare (SHOT- image jobs)",
+        "note": ".agents/notes/implemented/bug-fix/2026-09-04-short-drama-shot-confirm.md"
+      }
+    },
+    "added": {
+      "skills/short-drama-produce/scripts/agnes_adapters.py": {
+        "reason": "DSH-authored Agnes image/video adapters beside the pinned upstream module"
+      }
+    }
+  }
 }

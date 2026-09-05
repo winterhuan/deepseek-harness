@@ -680,5 +680,10 @@
       "sha256": "88cfe5e636f313006739b60d3f3a36bc2236f069c086639fa42635bb05218197",
       "bytes": 33144
     }
-  ]
+  ],
+  "governance": "Upstream snapshot; files[] is the upstream record. Paths listed under divergence are DSH-owned: forked files were modified (see reason), added files are DSH-authored. See .agents/notes/implemented/process/2026-09-05-knowledge-divergence-governance.md.",
+  "divergence": {
+    "forked": {},
+    "added": {}
+  }
 }

@@ -1457,5 +1457,17 @@
       "sha256": "2c6741ff9d6efb5ab59be6c247cd4935195c8ce37096a5c1fc5a071065c7eeee",
       "bytes": 41806
     }
-  ]
+  ],
+  "governance": "Upstream snapshot; files[] is the upstream record. Paths listed under divergence are DSH-owned: forked files were modified (see reason), added files are DSH-authored. See .agents/notes/implemented/process/2026-09-05-knowledge-divergence-governance.md.",
+  "divergence": {
+    "forked": {},
+    "added": {
+      "skills/story-import/scripts/export_novel_txt.py": {
+        "reason": "DSH-authored sharded-novel exporter for cross-domain adaptation intake"
+      },
+      "skills/story-import/scripts/record_lineage.py": {
+        "reason": "DSH-authored adaptation lineage ledger writer"
+      }
+    }
+  }
 }
