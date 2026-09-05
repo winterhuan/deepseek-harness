@@ -46,6 +46,14 @@ type ProductionSequenceItem,
 import { settledProductionIntents, type SettledProductionIntent } from './production-intents.js'
 import { CREATIVE_PRODUCTION_TOOL_NAME } from '../production-intent.js'
 import { VideoStudio, type VideoProject } from './video-studio.js'
+import {
+  hasCreativeProject,
+  readWorkbenchPreference,
+  resolveWorkbenchOpen,
+  workbenchPreferenceStorage,
+  writeWorkbenchPreference,
+  type WorkbenchPreference,
+} from './workbench-presence.js'
 import { endpoint, handleTabKey } from './workbench-ui.js'
 import { SessionUnavailableNotice, isSessionUnavailable } from './session-notice.js'
 import styles from './plugin.css?inline'
@@ -107,6 +115,7 @@ interface FileBuffer {
 
 interface WorkbenchMemory {
   buffers: Record<string, FileBuffer>
+  workbenchPreference: WorkbenchPreference | undefined
   editorMode: 'preview' | 'source' | 'production'
   expanded: Record<string, boolean>
   selected: string | undefined
@@ -138,6 +147,7 @@ function createWorkbenchStore() {
   return defineStore({
     init: (): WorkbenchMemory => ({
       buffers: {},
+      workbenchPreference: undefined,
       editorMode: 'preview',
       expanded: {},
       selected: undefined,
@@ -161,6 +171,9 @@ function createWorkbenchStore() {
     actions: {
       setBuffers: (draft, update: Update<Record<string, FileBuffer>>) => {
         draft.buffers = applyUpdate(draft.buffers, update)
+      },
+      setWorkbenchPreference: (draft, update: Update<WorkbenchPreference | undefined>) => {
+        draft.workbenchPreference = applyUpdate(draft.workbenchPreference, update)
       },
       setEditorMode: (draft, update: Update<WorkbenchMemory['editorMode']>) => {
         draft.editorMode = applyUpdate(draft.editorMode, update)
@@ -509,6 +522,7 @@ function GameStudio({
   paneId,
   labelledBy,
   onWorkbench,
+  onCollapse,
   onSelect,
 }: {
   readonly sessionId: string
@@ -524,6 +538,7 @@ function GameStudio({
   readonly paneId: string
   readonly labelledBy: string
   readonly onWorkbench: (mode: WorkbenchMode) => void
+  readonly onCollapse: () => void
   readonly onSelect: (path: string) => void
 }) {
   const project = workspace.games.find(value => value.id === gameProjectId) ?? workspace.games[0]
@@ -543,21 +558,24 @@ function GameStudio({
   useEffect(() => {
     if (project !== undefined && project.id !== gameProjectId) onGameProject(project.id)
   }, [gameProjectId, onGameProject, project])
-  if (project === undefined) return <main ref={studioRef} id={paneId} className="oh-game-studio" role="tabpanel" aria-labelledby={labelledBy} hidden={hidden}><div className="oh-game-design-empty">游戏能力正在载入…</div></main>
+  if (project === undefined) return <main ref={studioRef} id={paneId} className="oh-game-studio" role="tabpanel" aria-labelledby={labelledBy} hidden={hidden}><div className="oh-game-design-empty">游戏能力正在载入…<button className="creative-collapse" type="button" title="收起创作工作台" aria-label="收起创作工作台" onClick={onCollapse}>×</button></div></main>
   const tabs = ['preview', 'design'] as const
   return <main ref={studioRef} id={paneId} className="oh-game-studio" data-source={project.source} role="tabpanel" aria-labelledby={labelledBy} hidden={hidden}>
     <header className="oh-game-toolbar">
-      {workbenches.length > 1 && <div className="oh-game-mode-tabs" role="tablist" aria-label="创作工作台">
-        {workbenches.map(mode => <button
-          type="button"
-          role="tab"
-          key={mode}
-          aria-selected={mode === 'game'}
-          tabIndex={mode === 'game' ? 0 : -1}
-          onKeyDown={(event) => { handleTabKey(event, workbenches, 'game', onWorkbench) }}
-          onClick={() => { onWorkbench(mode) }}
-        >{workbenchLabel(mode)}</button>)}
-      </div>}
+      <div className="creative-workbench-cluster">
+        {workbenches.length > 1 && <div className="oh-game-mode-tabs" role="tablist" aria-label="创作工作台">
+          {workbenches.map(mode => <button
+            type="button"
+            role="tab"
+            key={mode}
+            aria-selected={mode === 'game'}
+            tabIndex={mode === 'game' ? 0 : -1}
+            onKeyDown={(event) => { handleTabKey(event, workbenches, 'game', onWorkbench) }}
+            onClick={() => { onWorkbench(mode) }}
+          >{workbenchLabel(mode)}</button>)}
+        </div>}
+        <button className="creative-collapse" type="button" title="收起创作工作台" aria-label="收起创作工作台" onClick={onCollapse}>×</button>
+      </div>
       <label className="oh-game-project" title="切换项目将重新载入试玩"><span>游戏项目</span><select aria-label="游戏项目；切换将重新载入试玩" value={project.id} onChange={(event) => { onGameProject(event.target.value) }}>
         {workspace.games.some(item => item.source === 'workspace') && <optgroup label="我的项目">{workspace.games.filter(item => item.source === 'workspace').map(item => <option value={item.id} key={item.id}>{`我的项目 · ${item.title}`}</option>)}</optgroup>}
         {workspace.games.some(item => item.source === 'example') && <optgroup label="内置示例">{workspace.games.filter(item => item.source === 'example').map(item => <option value={item.id} key={item.id}>{`内置示例 · ${item.title}`}</option>)}</optgroup>}
@@ -598,6 +616,13 @@ function CreativeWorkbench({
   sendProductionPrompt,
   cancelProduction,
   removeQueuedProduction,
+  workspace,
+  error,
+  sessionUnavailable,
+  workspaceLoading,
+  reload,
+  open,
+  creativeProject,
   useStore,
   actions,
 }: {
@@ -608,8 +633,14 @@ function CreativeWorkbench({
   readonly sessionRunning: boolean
   readonly productionQueue: readonly ProductionQueueEntry[]
   readonly productionIntents: readonly SettledProductionIntent[]
+  readonly workspace: WorkspacePayload | undefined
+  readonly error: string | undefined
+  readonly sessionUnavailable: boolean
+  readonly workspaceLoading: boolean
+  readonly reload: () => void
+  readonly open: boolean
+  readonly creativeProject: boolean
 } & Pick<WorkbenchSlotProps, 'useStore' | 'actions' | 'sendProductionPrompt' | 'cancelProduction' | 'removeQueuedProduction'>) {
-  const { workspace, error, sessionUnavailable, loading: workspaceLoading, reload } = useWorkspace(sessionId)
   const activities = useMemo(
     () => fileMutations(runningCalls, partial),
     [partial, runningCalls],
@@ -654,6 +685,11 @@ function CreativeWorkbench({
   const productionZoomByEpisode = useStore(memory => memory.productionZoom)
   const productionIntentCalls = useStore(memory => memory.productionIntentCalls)
   const surfaceRef = useRef<HTMLDivElement>(null)
+  const setWorkbenchPreference = actions.setWorkbenchPreference
+  const applyWorkbenchPreference = useCallback((preference: WorkbenchPreference): void => {
+    setWorkbenchPreference(preference)
+    writeWorkbenchPreference(workbenchPreferenceStorage(), workspace?.cwd, preference)
+  }, [setWorkbenchPreference, workspace?.cwd])
   const compactTabsId = useId()
   const compactStudioId = `${compactTabsId}-studio-panel`
   const compactVideoStudioId = `${compactTabsId}-video-studio-panel`
@@ -1110,7 +1146,7 @@ function CreativeWorkbench({
   }, [selected])
 
   useEffect(() => {
-    if (normalizedActivities.length > 0 || workspace === undefined) return
+    if (!open || normalizedActivities.length > 0 || workspace === undefined) return
     const sessionSurface = surfaceRef.current?.parentElement
     if (sessionSurface === undefined || sessionSurface === null) return
     const knownPaths = new Set(workspace.files.map(file => file.path))
@@ -1131,10 +1167,10 @@ function CreativeWorkbench({
     }
     sessionSurface.addEventListener('click', followOfficialFileLink, true)
     return () => { sessionSurface.removeEventListener('click', followOfficialFileLink, true) }
-  }, [normalizedActivities.length, revealPath, workspace])
+  }, [normalizedActivities.length, open, revealPath, workspace])
 
   useEffect(() => {
-    if (workbench !== 'game' && workbench !== 'video') return
+    if (!open || (workbench !== 'game' && workbench !== 'video')) return
     const surface = surfaceRef.current
     const sessionSurface = surface?.parentElement
     const chat = Array.from(sessionSurface?.children ?? []).find(child => child !== surface && child instanceof HTMLElement)
@@ -1231,6 +1267,7 @@ function CreativeWorkbench({
   }, [reload, sessionId])
 
   useEffect(() => {
+    if (!open) return
     const saveShortcut = (event: KeyboardEvent): void => {
       if (!(event.metaKey || event.ctrlKey) || event.key.toLocaleLowerCase() !== 's') return
       event.preventDefault()
@@ -1238,7 +1275,7 @@ function CreativeWorkbench({
     }
     globalThis.addEventListener('keydown', saveShortcut)
     return () => { globalThis.removeEventListener('keydown', saveShortcut) }
-  }, [savePath, selected])
+  }, [open, savePath, selected])
 
   const groups = useMemo(() => {
     const value = new Map<string, WorkspaceFile[]>()
@@ -1311,7 +1348,20 @@ function CreativeWorkbench({
     })
   }
 
-  return <div ref={surfaceRef} className="creative-split-surface" data-workbench={workbench}>
+  if (!open) {
+    // Without creative work there is nothing to reveal, so the plugin leaves the
+    // official conversation exactly as DSH renders it. A failed workspace request
+    // still offers the way in, because that error is only readable inside the workbench.
+    if (!creativeProject && error === undefined) return null
+    return <div ref={surfaceRef} className="creative-split-surface" data-open="false">
+      <style>{styles}</style>
+      <button className="creative-launcher" type="button" title={error ?? '打开创作工作台'} aria-label="打开创作工作台" onClick={() => { applyWorkbenchPreference('open') }}>
+        <span aria-hidden>✦</span><b>创作工作台</b>
+      </button>
+    </div>
+  }
+
+  return <div ref={surfaceRef} className="creative-split-surface" data-open="true" data-workbench={workbench}>
     <style>{styles}</style>
     {(workbench === 'game' || workbench === 'video') && <div className="oh-game-mobile-switcher" role="tablist" aria-label={workbench === 'game' ? '窄屏游戏工作台' : '窄屏视频工作台'}>
       {(['studio', 'chat'] as const).map(pane => <button
@@ -1341,6 +1391,7 @@ function CreativeWorkbench({
       paneId={compactStudioId}
       labelledBy={`${compactTabsId}-studio-tab`}
       onWorkbench={selectWorkbench}
+      onCollapse={() => { applyWorkbenchPreference('closed') }}
       onSelect={revealPath}
     />}
     {workbench === 'video' && workspace === undefined && <main id={compactVideoStudioId} className="oh-video-studio" role="tabpanel" aria-labelledby={`${compactTabsId}-studio-tab`}><div className="oh-video-preview-empty">{sessionUnavailable ? <SessionUnavailableNotice /> : (error ?? '正在连接视频工作台…')}</div></main>}
@@ -1357,12 +1408,16 @@ function CreativeWorkbench({
       onProject={setVideoProjectId}
       onTab={setVideoTab}
       onWorkbench={selectWorkbench}
+      onCollapse={() => { applyWorkbenchPreference('closed') }}
     />}
     {workbench !== 'game' && workbench !== 'video' && <>
       <aside className="creative-tree">
         <div className="creative-brand">
           <span className="creative-brand-cluster"><strong>✦ <span>Creative</span></strong>{workspaceKind !== undefined && <span className="creative-kind">{workspaceKind === 'story' ? '小说' : '短剧'}</span>}</span>
-          <button type="button" onClick={reload} title="刷新" aria-label="刷新项目文件">↻</button>
+          <span className="creative-brand-actions">
+            <button type="button" onClick={reload} title="刷新" aria-label="刷新项目文件">↻</button>
+            <button type="button" onClick={() => { applyWorkbenchPreference('closed') }} title="收起创作工作台" aria-label="收起创作工作台">×</button>
+          </span>
         </div>
         {workspace !== undefined && <div className="creative-mode-tabs" role="tablist" aria-label="创作工作台">
           {WORKBENCH_MODES.map(mode => <button
@@ -1532,6 +1587,18 @@ function CreativeSplitBridge({
   const productionQueue = useSession(snapshot => snapshot.queue.map(item => ({ id: item.id, preview: item.preview })))
   const chat = useChat(snapshot => snapshot)
   const productionIntents = useMemo(() => settledProductionIntents(chat), [chat])
+  const { workspace, error, sessionUnavailable, loading: workspaceLoading, reload } = useWorkspace(sessionId)
+  const chosenPreference = useStore(memory => memory.workbenchPreference)
+  const creativeProject = hasCreativeProject(workspace)
+  // The Session Store holds this Session's choice; localStorage carries the workspace's
+  // last choice across restarts. Reading it here keeps the decision in the same render
+  // that learns the workspace, so a collapsed workbench never flashes the layout open.
+  const storedPreference = useMemo(
+    () => readWorkbenchPreference(workbenchPreferenceStorage(), workspace?.cwd),
+    [workspace?.cwd],
+  )
+  const preference = chosenPreference ?? storedPreference
+  const open = resolveWorkbenchOpen(preference, creativeProject)
   useLayoutEffect(() => {
     const document = marker.current?.ownerDocument
     if (document === undefined) return
@@ -1547,6 +1614,26 @@ function CreativeSplitBridge({
   useLayoutEffect(() => {
     const scroller = target?.parentElement
     if (scroller === undefined || scroller === null) return
+    if (!open) {
+      // A collapsed workbench returns the conversation to DSH untouched, so the only
+      // measurement left is where that column sits: the launcher floats over its corner.
+      const publishSeam = (): void => {
+        const box = scroller.getBoundingClientRect()
+        scroller.style.setProperty('--creative-seam-top', `${String(box.top)}px`)
+        scroller.style.setProperty('--creative-seam-right', `${String(scroller.ownerDocument.documentElement.clientWidth - box.right)}px`)
+      }
+      publishSeam()
+      const seams = new ResizeObserver(publishSeam)
+      seams.observe(scroller)
+      const view = scroller.ownerDocument.defaultView
+      view?.addEventListener('resize', publishSeam)
+      return () => {
+        seams.disconnect()
+        view?.removeEventListener('resize', publishSeam)
+        scroller.style.removeProperty('--creative-seam-top')
+        scroller.style.removeProperty('--creative-seam-right')
+      }
+    }
     const composerSeat = (): HTMLElement | null => scroller.querySelector(':scope > [data-composer-seat]')
     const publishLayout = (): void => {
       // A seat that grows under a reader already at the tail must not swallow it.
@@ -1589,7 +1676,7 @@ function CreativeSplitBridge({
       delete scroller.dataset.creativeWorkbench
       delete scroller.dataset.creativeStudioPane
     }
-  }, [gamePane, target, videoPane, workbench])
+  }, [gamePane, open, target, videoPane, workbench])
   return <>
     <span ref={marker} className="creative-bridge-marker" aria-hidden />
     {target === undefined ? null : createPortal(<CreativeWorkbench
@@ -1600,6 +1687,13 @@ function CreativeSplitBridge({
       sessionRunning={sessionRunning}
       productionQueue={productionQueue}
       productionIntents={productionIntents}
+      workspace={workspace}
+      error={error}
+      sessionUnavailable={sessionUnavailable}
+      workspaceLoading={workspaceLoading}
+      reload={reload}
+      open={open}
+      creativeProject={creativeProject}
       sendProductionPrompt={sendProductionPrompt}
       cancelProduction={cancelProduction}
       removeQueuedProduction={removeQueuedProduction}

@@ -23,7 +23,7 @@ DeepSeek Harness 已承载编程 Agent，但对长篇创作尚无一等支持：
 
 ## Alternatives considered
 
-**每域一包。** 否决：四个 `dsh-<domain>` 会重复共享的 Host 路由、信任与 Client store，并为同一 UX 表面带来四次独立发版。单一 `creative` 组图（`packages/creative/README.md`）让四棵 `knowledge` 树同版，而四个 `SkillProvider.name` 保留独立发现。
+**每域一包。** 否决：四个 `dsh-<domain>` 会重复共享的 Host 路由、信任与 Client store，并为同一 UX 表面带来四次独立发版。单一 `creative` 组图（`packages/creative/README.md`）让四棵 `knowledge` 树同版，而四个 `SkillProvider.name` 保留独立发现。真实管线本来就是跨域的——小说改游戏、短剧的视频解说、图片与视频共用的分镜 `SHOT-` 编号——按域拆包会正好切在产品流动的地方。只有两条绊线才拆：单 mode 生命周期状态在共享 Client store 里堆积（拆 store 切片），或设置命名空间撑满一张卡片（拆命名空间）。存在性判定保持 workspace 级也是同一理由：混合 workspace 保留全部四个 tab。
 
 **复用上游 Dashboard 与 `dashboard_server.py`。** 否决：第二 Web Server 会在 DSH 的 `sandboxPolicy` 与 `SessionId` 作用域之外拥有独立权限、文件写入与会话传输。原生 `/creative` 路由与 `VideoStudio`/`DramaProductionView` 通过 DSH 拥有的工具与审批投影同一产物。
 

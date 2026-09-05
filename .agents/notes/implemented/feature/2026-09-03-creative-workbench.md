@@ -23,7 +23,7 @@ Package `files` is `lib/index.js`, `lib/client.js`, `cordis.patch.yml`, `knowled
 
 ## Alternatives considered
 
-**One package per domain.** Rejected: four separate `dsh-<domain>` packages would duplicate the shared Host route, trust, and Client store and force four independent version bumps for a single UX surface. The single `creative` group map (`packages/creative/README.md`) keeps the four `knowledge` trees versioned together while the four `SkillProvider.name` values preserve distinct discovery.
+**One package per domain.** Rejected: four separate `dsh-<domain>` packages would duplicate the shared Host route, trust, and Client store and force four independent version bumps for a single UX surface. The single `creative` group map (`packages/creative/README.md`) keeps the four `knowledge` trees versioned together while the four `SkillProvider.name` values preserve distinct discovery. The pipelines also cross domains — novel-to-game adaptation, video recaps of drama episodes, storyboard `SHOT-` ids shared by image and video jobs — so per-domain packages would cut the seam where the product flows. Split only on two tripwires: single-mode lifecycle state accumulating in the shared Client store (split store slices), or the settings namespace outgrowing one card (split namespaces). Presence stays workspace-level for the same reason: a mixed workspace keeps all four tabs.
 
 **Reuse upstream dashboards and `dashboard_server.py`.** Rejected: a second web server would own its own permissions, file writes, and session transport outside DSH's `sandboxPolicy` and `SessionId` scoping. The native `/creative` route and `VideoStudio`/`DramaProductionView` project the same artifacts through DSH-owned tools and approvals.
 

@@ -1,0 +1,8 @@
+# Mount the creative capability (Host plugin plus browser workbench) over the
+# scaffold's stable base and Web bundles. The scaffold composes bundle patches
+# directly, bypassing the shipped web profile that normally contributes the
+# dsh-creative bundle — without this row /creative/* answers 404 and no
+# workbench surface can mount.
+- insert:
+    - id: creative
+      name: '@deepseek-ai/dsh-creative'

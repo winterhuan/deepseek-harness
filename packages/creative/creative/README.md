@@ -11,6 +11,8 @@ English | [中文](README.zh.md)
 
 The creative plugin bundles fiction, short-drama, interactive-game, and video-recap workbenches on DeepSeek Harness. It ships pinned Skills and specialist Roles plus Host hooks/tools/route and Browser workbenches while DSH owns workspace, session, model, tools, and permissions.
 
+The four domains stay in one plugin deliberately: the real pipelines cross domains (novel-to-game adaptation, video recaps of drama episodes, storyboard `SHOT-` ids shared by image and video jobs), so per-domain packages would cut the seam where the product flows. Shared Host route, trust, credential forwarding, confirmation gate, and Client store are the owned assets; per-domain Skills, studios, and adapters are the seams. Split only on two tripwires: single-mode lifecycle state accumulating in the shared store (split store slices), or the settings namespace outgrowing one card (split namespaces). Presence stays workspace-level, never per-mode, so mixed workspaces keep all tabs.
+
 ## Table of Contents
 
 - [Use this package](#use-this-package)
@@ -54,6 +56,8 @@ Mount `creative` in a DSH profile to enable the creative workbenches; the shippe
 | `src/workspace-route.ts` | Session-scoped `/creative` HTTP API for listing/reading/writing creative files and media previews. |
 | `src/native-hooks.ts` | Tool waterfall guards for long-form prose invariants. |
 | `src/client/` | Browser workbench UI (file tree, markdown/jsonl preview, drama production, game/video studios). |
+
+The workbench claims the conversation layout only for a workspace that actually holds creative work (story/drama files, workspace game projects, or video projects; the bundled game example never counts). Any workbench collapses to a launcher that returns the conversation to DSH untouched, and an explicit open/closed choice wins over auto-detection and persists per workspace in browser storage.
 
 No runtime invariant companion is published. The plugin owns no cross-process event sequence or independently maintained mutable relation for a Cordis listener to compare; state is derived from the Session, Skill registrations, and file system within each operation.
 

@@ -11,6 +11,8 @@ kind: "package-bundle"
 
 creative 插件在 DeepSeek Harness 上聚合了小说、短剧、互动游戏与视频解说工作台。它打包了固定的 Skill 与专家 Role、Host 侧的钩子/工具/路由以及 Browser 工作台，而 DSH 负责工作区、会话、模型、工具与权限。
 
+四个域刻意放在一个插件里：真实管线是跨域的（小说改游戏、短剧的视频解说、图片与视频共用的分镜 `SHOT-` 编号），按域拆包会正好切在产品流动的地方。共享的 Host 路由、信任、密钥透传、确认门和 Client store 是自有资产；按域划分的 Skill、工作室、adapter 是接缝。只有两条绊线才拆：单 mode 生命周期状态在共享 store 里堆积（拆 store 切片），或设置命名空间撑满一张卡片（拆命名空间）。存在性判定保持 workspace 级，绝不按 mode 细分，混合 workspace 保留全部 tab。
+
 ## 目录
 
 - [使用本包](#use-this-package)
@@ -54,6 +56,8 @@ creative 插件在 DeepSeek Harness 上聚合了小说、短剧、互动游戏�
 | `src/workspace-route.ts` | 会话级 `/creative` HTTP API，负责列举/读取/写入创意文件与媒体预览。 |
 | `src/native-hooks.ts` | 针对长篇写作不变量的工具瀑布守卫。 |
 | `src/client/` | 浏览器工作台 UI（文件树、Markdown/JSONL 预览、短剧生产、游戏/视频工作室）。 |
+
+工作台只在 workspace 真有创作内容（小说/短剧文件、工作区游戏项目或视频项目；内置游戏示例不算）时才占用会话布局。任何工作台都可以收起到只剩一个浮动入口，把会话原样交还给 DSH；显式的打开/收起选择优先于自动判断，并按 workspace 记在浏览器本地存储里。
 
 No runtime invariant companion is published. 插件不拥有可通过 Cordis 监听器比较的跨进程事件序列或独立维护的可变关系；状态在每个操作内由 Session、Skill 注册与文件系统派生。
 

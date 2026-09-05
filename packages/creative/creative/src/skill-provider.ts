@@ -28,7 +28,7 @@ const DSH_SKILL_OVERRIDES: Readonly<Partial<Record<string, string>>> = {
   'story-long-analyze': 'Use creative_role for chapter extraction or specialist analysis. Never inspect platform agent directories or require a deployed external Agent definition.',
   'story-long-write': 'All named Roles are provided through creative_role. Do not check platform agent files. Keep the upstream writing, Tracking, lint, outline, revision, and quality workflows.',
   'story-review': 'All named reviewer Roles are provided through creative_role. Do not check platform agent files; full/lean review may use the bundled Roles directly.',
-  'story-import': 'All named Roles are provided through creative_role. Do not require story-setup to deploy them, and never inspect platform agent directories.',
+  'story-import': 'All named Roles are provided through creative_role. Do not require story-setup to deploy them, and never inspect platform agent directories. Export a sharded novel for cross-domain adaptation with scripts/export_novel_txt.py (正文/ chapters into 原著.txt plus 章节映射.json, whose spans cite back to chapter files); never hand-concatenate chapters for short-drama-novel-analyze or novel-game-analyze. Record every cross-domain adaptation edge with scripts/record_lineage.py into 改编谱系.jsonl at the workspace root (source fingerprints included); the ledger is append-only.',
   'story-deslop': 'Use the bundled narrative-writer Role through creative_role when specialist review is useful. Never inspect platform agent directories.',
   'story-short-analyze': 'Use creative_role for specialist analysis. Never inspect platform agent directories or require external Agent deployment.',
   'story-short-write': 'All named Roles are provided through creative_role. Do not inspect platform agent files; preserve the upstream short-fiction workflow and quality gates.',
@@ -50,6 +50,7 @@ const DSH_DRAMA_BRIDGE = [
 ].join('\n')
 const DSH_DRAMA_OVERRIDES: Readonly<Partial<Record<string, string>>> = {
   'short-drama': 'A dashboard request means focus or use the native 短剧 tab in this DSH Session. Do not run the bundled standalone Dashboard script. New projects follow only the v0.6 creator-first contract and create only documents required by the current request.',
+  'short-drama-novel-analyze': 'Read the export package from story-import (原著.txt plus 章节映射.json) for long-form work, never the story workspace itself; cite analysis spans through the chapter map back to chapter files. A short story is one 正文.md file: read it directly, no export package exists. Record the adaptation edge with story-import record_lineage.py at intake.',
   'short-drama-produce': 'Use an upstream adapter only after the creator explicitly confirms the exact current job. Its source must be the current creator-first Markdown and its output belongs under 剧集/<EP>/制作成果/. DSH permissions and approval UI remain authoritative. When creative_production is visible, register the previewed job with track_job after the confirmation is valid and before run — never at prepare time — passing the same job ID, target, modality and count the creator just approved. Run the confirmed job only through creative_produce_run with entry drama and the confirmed adapter, passing the job document on stdin: subprocess children start credential-scrubbed, so invoking provider_adapters.py through bash never receives the configured keys. Agnes image and video run through the agnes-image and agnes-video adapters on the same confirmed-job path; the flash video model is free while agnes-video-2.5 bills per second, so confirm the model together with the job. A storyboard frozen keyframe (SHOT-) is a valid image source: confirm accepts it exactly like prepare does.',
   'short-drama-assets': 'Keep one stable `- ID：VISUAL-*` line on every 人物/造型/地点/道具/状态 entry in 视觉设定.md, and never change an existing ID when editing its heading or text. The 生产 view identifies canvas nodes by that ID; entries without one still render, but the workbench reports their node identity as unstable.',
 }
@@ -62,6 +63,7 @@ const DSH_GAME_BRIDGE = [
   'For a web target, keep the authoritative playable entry at build/app/index.html so Game Studio can preview it. Do not silently replace a requested non-web runtime with a web build.',
   'Use only DSH-visible tools and approvals. qa/verification.json remains the sole machine QA truth and must cover launch, render, input, coreLoop, outcome, and restart with real execution evidence.',
   'The bundled Jin Ping Mei project is a read-only example, not a template to copy mechanically and not proof that another adaptation passed QA.',
+  'Adapt games from the novel (a story workspace or novel text), never from short-drama documents: screenplay density cannot support system design, and same-IP dual adaptation shares the novel upstream, not the drama. Record the adaptation edge with story-import record_lineage.py when intaking from a novel workspace or export package.',
   '</novel-to-game-dsh-integration>',
 ].join('\n')
 const DSH_VIDEO_BRIDGE = [
@@ -70,6 +72,7 @@ const DSH_VIDEO_BRIDGE = [
   'DSH owns the workspace, model, preset, permissions, Session Log, tools, approvals, cancellation, resume, Todo, Chat, and the 视频 preview Studio.',
   'Never start a second Agent runtime, dashboard, session transport, web server, polling loop, or model configuration.',
   'Keep the complete upstream six-Skill pipeline. Put each project under video-recaps/<project>/, copy or import source media under sources/, and use work/ as the upstream work_dir so the Studio can discover authoritative manifests and outputs.',
+  'Short-drama production outputs are ready recap sources: copy files from 剧集/<EP>/制作成果/ into the recap project sources/ preserving filenames (SHOT-/VISUAL- ids are the provenance), then run the normal pipeline. Record drama-to-recap deliveries the same way with story-import record_lineage.py; the ledger edge is the delivery handshake.',
   'The Video Studio is a preview and artifact surface, not a nonlinear editor. Do not invent a second project-state format, timeline truth, or render queue; recap_run_manifest.json, recap_phase.json, timeline.json, assembly_manifest.json, and the upstream artifacts remain authoritative.',
   'MIMO_API_KEY, FISH_API_KEY, and voice credentials resolve from the creative-produce profile and the credential store. Never write secrets into project files, tool arguments shown to the browser, or chat output. Run the pinned scripts only through creative_produce_run (entries video-voiceover, video-recap, video-doctor): subprocess children start credential-scrubbed, so invoking them through bash never receives the configured keys.',
   'Use only DSH-visible tools and approvals. Run Python and ffmpeg through the current DSH execution world, preserve cancellation, and do not install or upgrade system dependencies without explicit user approval.',
@@ -88,6 +91,7 @@ const DSH_NATIVE_SKILLS: Readonly<Partial<Record<string, string>>> = {
 - 导入已有作品：story-import
 - 审稿与去 AI 味：story-review、story-deslop
 - 封面：story-cover
+- 跨域改编：改短剧先经 story-import 导出原著包再进 short-drama-novel-analyze；改游戏进 novel-game-analyze；做解说把成片放进 video-recap 的 sources/
 - 管理作者习惯（记住/查看/确认/替换/忘掉写作偏好）：加载本 skill 的
   references/author-memory.md，只用本 skill 的 scripts/author_memory_commit.py 管理
   工作区级 .story/作者记忆/；工具未返回 Author Memory Receipt 前不得声称已记住。
