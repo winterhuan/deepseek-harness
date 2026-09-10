@@ -176,6 +176,39 @@ describe('Chat inject API', () => {
     await b.runtime.dispose()
   })
 
+  it('delegates file opening through a Session-addressed waterfall and withdraws the handler', async () => {
+    const benchResult = await bench()
+    try {
+      const { injected } = benchResult.chatViewApi(ROOT)
+      const opened = vi.fn()
+      const fiber = benchResult.runtime.ctx.plugin({
+        name: 'file-viewer-test',
+        apply(context) {
+          context.on('conversation/open-file', async (sessionId, path, next) => {
+            if (path !== '正文/第001章.md') return next()
+            opened(sessionId, path)
+          })
+        },
+      })
+      await fiber
+      await injected.openFile('正文/第001章.md')
+      expect(opened).toHaveBeenCalledExactlyOnceWith(ROOT, '正文/第001章.md')
+      expect(benchResult.sidebarRight.openResource).not.toHaveBeenCalled()
+      await injected.openFile('src/main.ts', { line: 42 })
+      expect(benchResult.sidebarRight.openResource).toHaveBeenCalledExactlyOnceWith(
+        'dsh-resource://file/session/root-1/src/main.ts', { params: { line: 42 } },
+      )
+      await fiber.dispose()
+      await injected.openFile('正文/第001章.md')
+      expect(benchResult.sidebarRight.openResource).toHaveBeenLastCalledWith(
+        'dsh-resource://file/session/root-1/%E6%AD%A3%E6%96%87/%E7%AC%AC001%E7%AB%A0.md',
+      )
+      expect(benchResult.openWorkspacePath).not.toHaveBeenCalled()
+    } finally {
+      await benchResult.runtime.dispose()
+    }
+  })
+
   it('fails loud when a Chat View inject resolves no Session', async () => {
     const b = await bench()
     const entry = b.runtime.slots.entries('conversation.view')[0]!

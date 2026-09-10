@@ -105,6 +105,9 @@
     - id: session-controller
       name: '@deepseek-ai/dsh-api-session-controller'
 
+    - id: skill-viewer
+      name: '@deepseek-ai/dsh-skill-viewer'
+
     # Workspace file service: bounded read, directory listing, and the
     # agent-write change feed inside the session workspace root.
     - id: workspace-files
@@ -293,6 +296,9 @@
 
     - id: ui-skill
       name: '@deepseek-ai/dsh-client-ui-skill'
+
+    - id: ui-skill-viewer
+      name: '@deepseek-ai/dsh-client-ui-skill-viewer'
 
     - id: ui-subagent
       name: '@deepseek-ai/dsh-client-ui-subagent'

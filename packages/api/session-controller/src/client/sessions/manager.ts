@@ -58,6 +58,8 @@ export interface SessionListSnapshot {
   subagentsByParent: Readonly<Record<SessionId, SubagentCatalogSnapshot>>
   /** Background jobs per session; an absent key is an empty set. */
   jobsBySession: Readonly<Record<SessionId, readonly JobView[]>>
+  /** True only after the current control stream has supplied its complete baseline. */
+  controlReady: boolean
   currentAddress: SubagentAddress | undefined
 }
 
@@ -132,6 +134,7 @@ export class SessionManager {
    * one representation.
    */
   private readonly jobsBySession = new Map<SessionId, readonly JobView[]>()
+  private controlReady = false
 
   private selected: SessionId | undefined
 
@@ -679,7 +682,14 @@ export class SessionManager {
     this.sessions.get(frame.sessionId)?.handleControlFrame(frame)
   }
 
+  /** Invalidate process-local observations until the replacement control baseline arrives. */
+  handleControlUnavailable(): void {
+    this.controlReady = false
+    this.notifier.markDirty()
+  }
+
   private replaceControlBaseline(baseline: SessionControlBaseline): void {
+    this.controlReady = true
     this.queues.clear()
     for (const [sessionId, items] of Object.entries(baseline.queues)) {
       this.queues.set(sessionId as SessionId, items)
@@ -952,6 +962,7 @@ export class SessionManager {
       error: this.listError,
       subagentsByParent: Object.fromEntries(this.catalogs),
       jobsBySession: Object.fromEntries(this.jobsBySession),
+      controlReady: this.controlReady,
       currentAddress: current === undefined ? undefined : this.addresses.get(current),
     }
   }

@@ -236,6 +236,12 @@ The model-facing `skill({ name })` tool validates the kebab-case name, finds the
 
 `SkillListRequest` addresses one Session by `sessionId`; `SkillListValue` returns the user-invocable entries with name, description, optional usage guidance, and model-invocation availability. `SessionSkillCatalog` reads the Session cwd and recorded preset without activating an Agent. A live Agent may supply its scoped registry, while a cold Session uses the preset's standing scope.
 
+## Read-only skill viewer
+
+The [skill viewer](../../packages/skill/skill-viewer/README.md) exposes the `skillViewer` Remote namespace through `ctx.skillViewerCatalog`. `listDetails` accepts a `SkillViewerListRequest` containing `sessionId` and returns a `SkillViewerListValue` with user-invocable `SkillViewerEntry` records and a `stale` flag for incomplete provider observations. Each entry includes its source and provider. `get` accepts a `SkillViewerGetRequest` containing `sessionId` and `name` and returns a `SkillViewerGetValue` with the instruction body, optional file path, optional `SkillViewerResourceBase`, and a `SkillViewerReferences` listing for local resources. `readReference` accepts a `SkillViewerReferenceRequest` naming the Session, skill and relative reference path, and returns a `SkillViewerReferenceValue` with UTF-8 content, file size and truncation state. The [wire types](../../packages/skill/skill-viewer/src/types.ts) define the request and response fields.
+
+Viewer reads use the Session's cwd and preset scope without activating an Agent or writing session events. They serve human presentation; the composer catalog and model-facing tool remain separate Consumers. The [browser panel](../../packages/client/ui-skill-viewer/README.md) owns rendering and request caching.
+
 <!-- BEGIN GENERATED cordis-surface (gen-cordis-catalog.ts) — do not edit between markers -->
 
 <a id="cordis-surface"></a>
@@ -326,6 +332,44 @@ async get(name: string, options: SkillViewOptions = {}): Promise<SkillDefinition
 ```
 
 Source: [`packages/skill/skill/src/index.ts`](../../packages/skill/skill/src/index.ts)
+
+<a id="ctxskillviewercatalog--skillviewercatalog"></a>
+
+### `ctx.skillViewerCatalog` — `SkillViewerCatalog`
+
+Host service backing `ctx.remote.skillViewer` without activating a cold Agent.
+
+```ts cordis-catalog
+/**
+ * List the user-invocable skills visible to one Session composition, with
+ * the source and provider metadata the composer catalog omits.
+ * @param request - Session identity whose cwd and preset select the catalog view.
+ * @param signal - caller lifetime carried by the Remote transport; admitted catalog reads retain their existing completion semantics.
+ * @returns user-invocable skill metadata without bodies, plus whether a provider observation was incomplete.
+ * @throws RemoteError when the Session cannot be inspected or no registry can serve it.
+ */
+@Remote async listDetails(request: SkillViewerListRequest, signal: AbortSignal): Promise<SkillViewerListValue>
+
+/**
+ * Load one user-invocable skill body for viewer presentation.
+ * @param request - Session identity selecting the catalog view plus the exact skill name from the viewer list.
+ * @param signal - caller lifetime used to cancel reference discovery.
+ * @returns the full skill with body content and its local reference listing.
+ * @throws RemoteError when the Session cannot be inspected, the name is invalid, or no user-invocable skill with this name is available.
+ */
+@Remote async get(request: SkillViewerGetRequest, signal: AbortSignal): Promise<SkillViewerGetValue>
+
+/**
+ * Read one local reference of a user-invocable skill without starting an Agent.
+ * @param request - Session, skill name, and relative file path under references/.
+ * @param signal - caller lifetime used to cancel file reading.
+ * @returns a bounded UTF-8 preview with explicit truncation and file-size metadata.
+ * @throws RemoteError when the Session or skill is unavailable, the path is unsafe, or the file cannot be read as text.
+ */
+@Remote async readReference(request: SkillViewerReferenceRequest, signal: AbortSignal): Promise<SkillViewerReferenceValue>
+```
+
+Source: [`packages/skill/skill-viewer/src/index.ts`](../../packages/skill/skill-viewer/src/index.ts)
 
 <a id="skills-events"></a>
 

@@ -42,6 +42,8 @@ Session 对象还承载本地提交回显：`session.beginSubmission` 在调用�
 
 当 `connection`、`fs` 与 `attachments` 均被组合时，`SessionMediaReferences` 在鉴权 `connection.fetch` 通道上挂载 `GET|HEAD /api/file?path=<绝对路径>`。它通过 `ctx.fs` 读取普通文件，包括已注册工作区之外的临时路径与远程提供方中的文件。目录包含关系与 MIME 类别均不限制访问；`mime-types` 提供响应类型，未知扩展名使用 `application/octet-stream`。GET 复用 `readBytes` 执行读取前及读取中的字节限制；HEAD 只读取元数据。所有文件均使用 `ctx.attachments.imageLimits.maxImageBytes`（通常为 20 MiB）；超过此上限返回 413。响应包含完整文件，忽略 Range，并携带 `private, no-store`、`nosniff` 与沙箱 CSP，使直接打开的 HTML/SVG 无法以 API 源身份执行脚本。客户端重写位于 `ui-chat`（`AssistantMarkdown`）；音视频文件响应已可用，Markdown 音视频播放器节点仍是独立工作。
 
+Client 列表快照在缓存的 `jobsBySession` 之外公开 `controlReady`。首次完整基线到达前、控制连接中断后或控制流终止失败后，它均为 false；完整基线替换进程内状态后变为 true。连接就绪通知不会使已接受的基线失效。消费者等待该基线后才能把缺失的作业判为状态不可用；读取作业快照不消费进程输出。
+
 -----
 
 <a id="configuration"></a>

@@ -2,7 +2,7 @@
  * Shared helpers for stylesheet-contract specs: flatten CSS text on disk into
  * rules and enumerate the package stylesheets those contracts range over.
  */
-import { readdirSync } from 'node:fs'
+import { globSync } from 'node:fs'
 import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
@@ -72,20 +72,11 @@ export function varReferences(value: string): string[] {
 }
 
 /**
- * Every CSS file shipped as package source, excluding build output and
- * installed dependencies.
- * @returns absolute paths of the stylesheets under packages/.
+ * Package-owned source stylesheets, excluding build output, fixtures, and
+ * independently rendered knowledge examples.
+ * @param packagesDir - Root containing the package groups.
+ * @returns absolute paths of the stylesheets under each package's src/.
  */
-export function packageStylesheets(): string[] {
-  const found: string[] = []
-  const walk = (dir: string): void => {
-    for (const entry of readdirSync(dir, { withFileTypes: true })) {
-      const path = join(dir, entry.name)
-      if (entry.isDirectory()) {
-        if (entry.name !== 'node_modules' && entry.name !== 'lib' && entry.name !== 'dist') walk(path)
-      } else if (entry.name.endsWith('.css')) found.push(path)
-    }
-  }
-  walk(PACKAGES_DIR)
-  return found
+export function packageStylesheets(packagesDir = PACKAGES_DIR): string[] {
+  return globSync('*/*/src/**/*.css', { cwd: packagesDir }).map(path => join(packagesDir, path))
 }

@@ -16,7 +16,7 @@ The session header was already the place where per-session background activity l
 
 Task state reaches the browser as **one whole-snapshot control frame per session**, pushed at every registry commit point that changes what that session can see. The client keeps a last-wins mirror; a header action renders it. There is no RPC, no polling, and no client-side staleness bookkeeping.
 
-This ships the list alone. Per-task streamed output and a human-initiated cancellation are separate phases, and the channel is shaped so neither has to undo it.
+The header list is read-only. Per-task streamed output is separate; [Creative's Session-owned stop operation](2026-09-03-creative-workbench.md#production-and-credentials) uses the same registry and control feed without extending the list's API.
 
 ### Wire shape
 
@@ -95,7 +95,7 @@ A running one-shot background subagent therefore appears both there and in the s
 
 **No web path calls `ctx.jobs.read()`.** It consumes the single output cursor, so a browser read would silently take bytes the model's `job_output` will never see. This is an invariant worth a test rather than a convention, because the failure is invisible at the call site.
 
-**No cancellation.** That phase owes a decision the seam does not currently answer: `kill()` marks terminal delivery reported, so a human interrupt written against the `kill()` contract would leave the model believing its task is still running.
+**No header-list cancellation.** `kill()` marks terminal delivery reported, so a stop does not itself notify the model of the outcome. Creative's separate stop operation accepts this framework behavior and does not inject a model-visible result.
 
 **No output watermark on the frame.** The output phase's delta channel is where an anchor field earns its place; one added now would have no reader.
 
@@ -129,7 +129,7 @@ Below it, [`jobs-local`](../../../../packages/jobs/jobs-local/tests/jobs.spec.ts
 
 **Settled rows accumulate.** The registry retains settled tasks until owner disposal, so a long session with many background commands grows a long list. Capping the settled tail is a presentation change, not a protocol one, if it becomes a real complaint.
 
-**`stopping` is rarely visible.** Only the model's `job_kill` produces it, so the state is rendered but rarely seen until human cancellation lands. It is in the union now because leaving a status out would have made that phase a wire change.
+**`stopping` is a registry state.** Both the model's `job_kill` and Creative's human stop operation can produce it. The UI waits for registry settlement rather than predicting cancellation from the accepted stop request.
 
 **Two entry points for one running subagent.** Accepted deliberately, and bounded to one-shot background delegations. If it reads as noise in practice, the fix is presentational — the catalog row can cite the task rather than the task list hiding the kind.
 

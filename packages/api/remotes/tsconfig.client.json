@@ -57,6 +57,9 @@
       "path": "../../settings/settings"
     },
     {
+      "path": "../../skill/skill-viewer"
+    },
+    {
       "path": "../../subagent/subagent"
     },
     {

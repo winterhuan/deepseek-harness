@@ -113,7 +113,8 @@ export function apply(ctx: Context): void {
 
   const control = createSessionControlStream(remotes, {
     accept: (frame) => { sessions.handleControlFrame(frame) },
-    failed: (error) => { console.error('[session-controller] control stream failed:', error) },
+    carrierFailed: () => { sessions.handleControlUnavailable() },
+    failed: (error) => { sessions.handleControlUnavailable(); console.error('[session-controller] control stream failed:', error) },
   })
   control.start()
   ctx.on('connection/reset', () => { sessions.handleConnected() })

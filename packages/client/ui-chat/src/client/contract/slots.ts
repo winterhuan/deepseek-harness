@@ -21,6 +21,18 @@ import type {
 import type { TurnProcessSpec } from './turn-process.ts'
 import type { TranscriptViewMode } from '../../chat-settings.ts'
 
+declare module '@deepseek-ai/cordis' {
+  interface Events {
+    /**
+     * Open a Session file through an optional workspace renderer.
+     * @mode waterfall
+     * @param sessionId - Session authorizing the file request.
+     * @param path - File path as supplied by the transcript.
+     * @param next - Delegate to the next renderer or right Sidebar file preview.
+     */
+    'conversation/open-file'(sessionId: SessionId, path: string, next: () => Promise<void>): Promise<void>
+  }
+}
 /** Selector hook over the current Conversation binding's Chat target. */
 export type UseChat = SnapshotSelectorHook<ChatSnapshot>
 

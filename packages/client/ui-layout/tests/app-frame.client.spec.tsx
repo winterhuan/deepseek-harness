@@ -80,6 +80,7 @@ function mountFrame(windowWidth = frameWidth) {
     phase: 'ready',
     subagentsByParent: {},
     jobsBySession: {},
+    controlReady: true,
     currentAddress: undefined,
   })
   const workspaceState: WorkspaceSnapshot = {

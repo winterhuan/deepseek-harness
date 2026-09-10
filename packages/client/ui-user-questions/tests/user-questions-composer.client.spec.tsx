@@ -53,7 +53,7 @@ const sessionList = {
   current: SID,
   phase: 'ready' as const,
   subagentsByParent: {},
-  jobsBySession: {},
+  jobsBySession: {}, controlReady: true,
   currentAddress: undefined,
 }
 const attentionState: AttentionState = new Map()

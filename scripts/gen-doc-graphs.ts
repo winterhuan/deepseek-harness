@@ -179,6 +179,14 @@ const SERVICE_ROLES: ServiceRole[] = [
     note: 'Lists the Session composition\'s user-invocable skills without activating a cold Agent.',
   },
   {
+    key: 'skillViewerCatalog',
+    pkg: 'skill-viewer',
+    title: 'Session-addressed skill viewer Remote adapter',
+    mode: 'core',
+    consumers: ['client-ui-skill-viewer'],
+    note: 'Serves user-invocable skill metadata and bodies for human browsing without activating an Agent or writing session events.',
+  },
+  {
     key: 'credentialsController',
     pkg: 'api-settings-controller',
     title: 'Host credential-surface Remote controller',
@@ -428,7 +436,7 @@ const SERVICE_ROLES: ServiceRole[] = [
     title: 'Skill provider registry',
     mode: 'seam',
     implementations: ['skill-badge', 'skill-filesystem'],
-    consumers: ['tool-skill'],
+    consumers: ['tool-skill', 'skill-viewer'],
     note: 'Merges provider skill catalogs; tool-skill renders the session-prefix catalog and loads complete skill bodies.',
   },
   {

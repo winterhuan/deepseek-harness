@@ -20,6 +20,7 @@ File-mention providers receive the viewed Session ID with the closing-turn owner
 - [Completed-turn footer](#completed-turn-footer)
 - [Turn Process Folding](#turn-process-folding)
 - [Scroll ownership](#scroll-ownership)
+- [File opening](#file-opening)
 - [Model Experience](#model-experience)
 - [Known Limitations and Deferred Work](#known-limitations-and-deferred-work)
 - [Dev Note](#dev-note)
@@ -59,6 +60,13 @@ Settings → General exposes a persisted, localized `Normal` / `Compact` convers
 ## Scroll ownership
 
 Chat restores semantic anchors across history prepend and renderer remounts. Pinned scroll deliveries without reader movement update follow ownership immediately, before subsequent layout changes can invalidate their floor. Reader movement remains pending until the sampling interval or `scrollend`, even inside the follow threshold, so layout growth cannot erase small scroll gestures. While the reader is pinned to the floor, `ResizeObserver` follows the new floor and selects the latest loaded Turn without reading row geometry. Once the reader moves away, flow-height changes preserve the top position and the reading-line geometry selects the active Turn. Turn-rail previews paint above sticky Markdown code-block banners, while the rail frame remains inside the transcript band above the composer.
+
+-----
+
+<a id="file-opening"></a>
+## File opening
+
+Transcript file actions invoke the typed `conversation/open-file` waterfall with the current `SessionId`, the supplied path and `next()`. A workspace renderer handles only its recognized files and delegates every other path through `next()`; the final handler opens a file resource in the right Sidebar and preserves any requested line as a navigation parameter. Listener disposal removes the interception without changing transcript buttons or DOM ownership.
 
 -----
 

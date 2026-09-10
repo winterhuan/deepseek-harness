@@ -40,7 +40,7 @@ function createSessionsBench(_ctx: Context): SessionsBench {
     current: undefined,
     phase: 'ready',
     subagentsByParent: {},
-    jobsBySession: {},
+    jobsBySession: {}, controlReady: true,
     currentAddress: undefined,
   })
   const bindings = new Map<SessionId, SessionBinding>()

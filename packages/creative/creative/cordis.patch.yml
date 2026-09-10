@@ -1,0 +1,3 @@
+- insert:
+    - id: creative
+      name: '@deepseek-ai/dsh-creative'

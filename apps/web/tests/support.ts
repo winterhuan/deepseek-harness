@@ -33,6 +33,18 @@ export async function newEnglishPage(browser: Browser, height = 1000): Promise<P
 }
 
 /**
+ * Open the standard browser-test page advertising {@link ZH_BROWSER_LOCALE}
+ * before client boot, for scenarios asserting the Chinese surface (the
+ * zh-first product default and every locale-owned plugin's source language).
+ * @param browser - Playwright browser owning the page.
+ * @param height - Viewport height; width is fixed to the lane baseline.
+ * @returns the initialized page.
+ */
+export async function newChinesePage(browser: Browser, height = 1000): Promise<Page> {
+  return await browser.newPage({ viewport: { width: 1680, height }, locale: ZH_BROWSER_LOCALE })
+}
+
+/**
  * Expand every currently eligible Turn-process group so a Tool-focused
  * scenario can exercise the original row contract beneath product-default
  * compact Chat presentation.

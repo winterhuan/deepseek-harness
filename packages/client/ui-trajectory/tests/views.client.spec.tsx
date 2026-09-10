@@ -173,7 +173,7 @@ function standaloneDuration(): Pick<
 /** Empty sessions-list hook; breadcrumbs therefore fall back to the raw id. */
 function emptySessions() {
   const store = createSnapshotStore<SessionListState>(
-    { ids: [], byId: {}, current: undefined, phase: 'ready', subagentsByParent: {}, jobsBySession: {}, currentAddress: undefined })
+    { ids: [], byId: {}, current: undefined, phase: 'ready', subagentsByParent: {}, jobsBySession: {}, controlReady: true, currentAddress: undefined })
   return bindSnapshotSelector(store)
 }
 
@@ -247,7 +247,7 @@ function standaloneProps(
 }
 
 type ConversationTargetSources = {
-  [Target in Extract<keyof ConversationViewSnapshotMap, string>]:
+  [Target in Extract<keyof ConversationViewSnapshotMap, string>]?:
   ObservableSnapshot<ConversationViewSnapshotMap[Target] | undefined>
 }
 
@@ -271,10 +271,11 @@ async function bench(snapshot = historySnapshot(NODES)) {
     chat: createSnapshotStore<ChatSnapshot | undefined>(undefined),
     trajectory: trajectoryStore,
   }
+  const absentTarget = createSnapshotStore<undefined>(undefined)
   const binding: ConversationBinding = {
     snapshot: conversationStore,
     activate: () => {},
-    target: target => targetSources[target],
+    target: target => targetSources[target] ?? absentTarget,
   }
   vi.spyOn(uiConversation, 'binding').mockReturnValue(binding)
   // The conversation entry's role: declare the ring, then seed the chat entry.

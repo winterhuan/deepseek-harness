@@ -923,6 +923,21 @@ describe('completed reminder', () => {
 })
 
 describe('background-job mirror', () => {
+  it('requires a complete baseline after startup and every control interruption', () => {
+    const manager = makeManager()
+    expect(manager.getListSnapshot().controlReady).toBe(false)
+    manager.handleControlFrame({ type: 'baseline', value: { queues: {}, jobs: {}, projections: {} } })
+    expect(manager.getListSnapshot().controlReady).toBe(true)
+    manager.handleControlFrame(tasksFrame(S1, [view()]))
+    manager.handleControlUnavailable()
+    expect(manager.getListSnapshot().controlReady).toBe(false)
+    expect(manager.getListSnapshot().jobsBySession[S1]).toHaveLength(1)
+    manager.handleControlFrame(tasksFrame(S1, [view({ status: 'completed' })]))
+    expect(manager.getListSnapshot().controlReady).toBe(false)
+    manager.handleControlFrame({ type: 'baseline', value: { queues: {}, jobs: {}, projections: {} } })
+    expect(manager.getListSnapshot().controlReady).toBe(true)
+    expect(manager.getListSnapshot().jobsBySession[S1]).toBeUndefined()
+  })
   const view = (over: Partial<{ id: string; status: string; label: string }> = {}) => ({
     id: 'bash-1', kind: 'bash', label: 'pnpm run build', status: 'running', startedAt: 5, ...over,
   })
