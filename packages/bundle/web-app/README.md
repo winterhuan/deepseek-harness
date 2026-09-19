@@ -40,6 +40,8 @@ After startup you see a `dsh web:` line whose root URL carries a fresh process t
 
 Saved model selections override the composition default. Both protocols share `deepseek-official` and `llm-deepseek` settings, so switching preserves model selections and credential references. Endpoint overrides retain their values; the settings card lets users supply a compatible API address.
 
+Choose **Skills** at the bottom of the left Sidebar to search the current Session's skills and read their full instructions. The [skill viewer](../../client/ui-skill-viewer/README.md) reads the catalog without invoking skills or adding Session events.
+
 ### Configuration
 
 Most users never set these; the command-line flags feed the four settings below — `--host`, `--port`, and `--trusted-host` come from the invocation, and `--no-open` turns the browser handoff off for that invocation:

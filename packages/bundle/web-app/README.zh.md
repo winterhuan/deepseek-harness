@@ -40,6 +40,8 @@ dsh --profile web --no-open --port 8080
 
 已保存的模型选择优先于组合默认值。两种协议共用 `deepseek-official` 与 `llm-deepseek` 设置，因此切换协议不改变模型选择或复制凭据。端点覆盖保持原值；设置卡片允许用户填写兼容的 API 地址。
 
+点击左侧 Sidebar 底部的**技能**，即可搜索当前 Session 的技能并阅读完整说明。[技能查看器](../../client/ui-skill-viewer/README.zh.md)读取目录，不调用技能或追加 Session 事件。
+
 ### 配置
 
 大多数用户不需要设置这些；命令行 flag 会提供给下面四个设置——`--host`、`--port` 与 `--trusted-host` 来自本次调用，`--no-open` 仅对本次调用关闭浏览器交接：
