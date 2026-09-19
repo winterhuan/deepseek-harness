@@ -11,7 +11,7 @@ import type { WorkspaceId } from '@deepseek-ai/dsh-workspace/types'
 import type { RemoteResult } from '@deepseek-ai/dsh-typert-protocol'
 import type { AgentContext } from '../scope.ts'
 import type { SessionSearchResultItem } from '../sessions/manager.ts'
-import type { SessionBinding, SessionListState } from '../sessions/service.ts'
+import type { SessionBinding, SessionJobsBaseline, SessionListState } from '../sessions/service.ts'
 import type { SessionFace } from './session.ts'
 import type { ObservableSnapshot } from '@deepseek-ai/dsh-client-store'
 import type { SessionReferenceSource } from '../index.ts'
@@ -49,6 +49,12 @@ export interface SessionRetainInfo {
 export interface ISessions {
   /** Host catalog and local reference-source counts; navigation belongs to view owners. */
   readonly list: ObservableSnapshot<SessionListState>
+  /**
+   * Readiness of the control baseline behind {@link list}'s `jobsBySession`
+   * mirror. Consumers that classify an absent job as unavailable wait for
+   * `ready`; while it is false the mirror's rows are stale, not authoritative.
+   */
+  readonly jobsBaseline: ObservableSnapshot<SessionJobsBaseline>
   /**
    * Retain an exact Client generation and start its shared initial history opening.
    * @param target - known identity or durable direct-parent address.

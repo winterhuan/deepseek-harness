@@ -5,7 +5,7 @@ import {
   createScope, MutableSessionEventSource, scopeOf, SESSION_SEARCH_RESULT_LIMIT,
 } from '@deepseek-ai/dsh-api-session-controller/client'
 import type {
-  AgentContext, ISessions, ProjectionsFace, SessionBinding, SessionFace, SessionListState,
+  AgentContext, ISessions, ProjectionsFace, SessionBinding, SessionFace, SessionJobsBaseline, SessionListState,
   SessionEventLikeEntry, SessionLiveEventEntry, SessionSearchResultItem,
   SessionReference, SessionReferenceSource, SessionRetainInfo, SessionRetainOptions,
   SessionSnapshot, SessionSummary, SessionTarget, SubmissionHandle,
@@ -302,6 +302,8 @@ class TestSessionReference implements SessionReference {
 export class TestSessions implements ISessions {
   /** The useSessions catalog feed, independent of view ownership. */
   readonly list: SnapshotStore<SessionListState>
+  /** Control-baseline readiness; the double starts with a complete baseline. */
+  readonly jobsBaseline: SnapshotStore<SessionJobsBaseline>
   private readonly records = new Map<SessionId, SessionRecord>()
   private readonly generations = new Map<SessionId, SessionGeneration>()
   private readonly addresses = new Map<SessionId, SubagentAddress>()
@@ -330,6 +332,7 @@ export class TestSessions implements ISessions {
     this.list = createSnapshotStore<SessionListState>({
       ids: [], byId: {}, phase: 'ready', subagentsByParent: {}, jobsBySession: {},
     })
+    this.jobsBaseline = createSnapshotStore<SessionJobsBaseline>({ ready: true })
     rootCtx.effect(() => async () => {
       this.closed = true
       for (const [id, generation] of this.generations) {

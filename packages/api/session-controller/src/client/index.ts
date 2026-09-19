@@ -27,7 +27,9 @@ export type {
 export { createScope, scopeOf } from './scope.ts'
 export type { AgentContext, AgentScopeHandle } from './scope.ts'
 export { SessionCreateError, SessionForkError } from './sessions/service.ts'
-export type { SessionBinding, SessionListState, SessionSummary } from './sessions/service.ts'
+export type {
+  SessionBinding, SessionJobsBaseline, SessionListState, SessionSummary,
+} from './sessions/service.ts'
 export type {
   SessionListPhase,
   SessionListSnapshot,
@@ -127,7 +129,8 @@ export function apply(ctx: Context): void {
 
   const control = createSessionControlStream(remotes, {
     accept: (frame) => { sessions.handleControlFrame(frame) },
-    failed: (error) => { console.error('[session-controller] control stream failed:', error) },
+    carrierFailed: () => { sessions.handleControlUnavailable() },
+    failed: (error) => { sessions.handleControlUnavailable(); console.error('[session-controller] control stream failed:', error) },
   })
   const connected = (): void => {
     if (connection.generation.getSnapshot() === undefined) return

@@ -67,9 +67,11 @@ describe('Session Controller Client apply', () => {
     await emit(mock, 'api-session/removed', sid('session-1'))
     await vi.waitFor(() => { expect(sessions.list.getSnapshot().byId[sid('session-1')]).toBeUndefined() })
 
+    await vi.waitFor(() => { expect(sessions.jobsBaseline.getSnapshot().ready).toBe(true) })
     client.connection.reconnect()
     await mock.streams.opened(EVENTS, 2)
     await vi.waitFor(() => { expect(connected).toHaveBeenCalledTimes(2) })
+    await vi.waitFor(() => { expect(sessions.jobsBaseline.getSnapshot().ready).toBe(true) })
   }, COLD_BOOT_TIMEOUT_MS)
 
   it('runs handleConnected at apply when the Host is already connected, as a reload of the row does', async ({ start }) => {
@@ -113,15 +115,20 @@ describe('Session Controller Client apply', () => {
 
   it('accepts the control baseline, retries a carrier loss once, and reports a second opening snapshot as a protocol failure', async ({ mock, start }) => {
     const accept = vi.spyOn(ClientSessions.prototype, 'handleControlFrame')
+    const unavailable = vi.spyOn(ClientSessions.prototype, 'handleControlUnavailable')
     const logged = vi.spyOn(console, 'error').mockImplementation(() => {})
-    await start()
+    const { sessions } = await bench(start)
     await vi.waitFor(() => { expect(baselines(accept)).toBe(1) })
     expect(accept).toHaveBeenCalledWith(BASELINE)
+    expect(sessions.jobsBaseline.getSnapshot().ready).toBe(true)
 
     // One immediate retry while the Host is available reopens the stream, whose script pushes the baseline again.
     mock.streams.fail(CONTROL, new RemoteStreamCarrierError('generation lost'))
     await vi.waitFor(() => { expect(baselines(accept)).toBe(2) })
     expect(mock.log.streams(CONTROL)).toHaveLength(2)
+
+    expect(unavailable).toHaveBeenCalled()
+    expect(sessions.jobsBaseline.getSnapshot().ready).toBe(true)
 
     mock.streams.push(CONTROL, BASELINE)
     await vi.waitFor(() => {
@@ -130,6 +137,7 @@ describe('Session Controller Client apply', () => {
         expect.objectContaining({ message: 'session control stream emitted more than one opening snapshot' }),
       )
     })
+    expect(sessions.jobsBaseline.getSnapshot().ready).toBe(false)
   })
 
   it('materializes Host-addressed Agent scopes before the Session list arrives', async ({ mock, start }) => {

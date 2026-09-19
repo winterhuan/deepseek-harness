@@ -131,13 +131,13 @@ export function apply(ctx: Context): void {
           // address: the file is one piece of content whether it is opened at
           // its top or at line 400, so the same tab is revealed and told where
           // to land.
-          openFile: async (path, options) => {
+          openFile: (path, options) => ctx.waterfall('conversation/open-file', sessionId, path, async () => {
             const cwd = ctx.sessions.list.getSnapshot().byId[sessionId]?.cwd
             const url = fileAddressFor(sessionId, cwd, path)
             if (options?.line === undefined) ctx.sidebarRight.openResource(url)
             else ctx.sidebarRight.openResource(url, { params: { line: options.line } })
             await Promise.resolve()
-          },
+          }),
           openSkill: (name) => {
             const scope = ctx.sessions.scope(sessionId)
             if (scope === undefined) return

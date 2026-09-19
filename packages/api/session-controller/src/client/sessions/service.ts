@@ -67,6 +67,18 @@ export interface SessionListState {
   jobsBySession: Readonly<Record<SessionId, readonly JobView[]>>
 }
 
+/**
+ * Readiness of the Session Controller control baseline that `jobsBySession`
+ * mirrors. Kept off {@link SessionListState} because it is a control-stream
+ * property, not a list property: only consumers that classify job identity
+ * against the baseline observe it, so the shared list snapshot stays free of a
+ * field every unrelated consumer would otherwise carry.
+ */
+export interface SessionJobsBaseline {
+  /** True only after the current control stream has supplied its complete baseline. */
+  readonly ready: boolean
+}
+
 /** Structured session-create failure. */
 export class SessionCreateError extends Error {
   override readonly name = 'SessionCreateError'
@@ -243,6 +255,8 @@ export class ClientSessions implements ISessions {
   readonly searchResultLimit = SESSION_SEARCH_RESULT_LIMIT
   /** Catalog metadata and local reference-source projection. */
   readonly list: SnapshotStore<SessionListState>
+  /** Control-baseline readiness for {@link list}'s `jobsBySession` mirror. */
+  readonly jobsBaseline: SnapshotStore<SessionJobsBaseline>
   /** The object-layer instance cluster and frame dispatch entry. */
   private readonly manager: SessionManager
   private readonly scopes = new Map<SessionId, ScopeRecord>()
@@ -263,7 +277,11 @@ export class ClientSessions implements ISessions {
     this.list = createSnapshotStore<SessionListState>({
       ids: [], byId: {}, phase: 'pending', subagentsByParent: {}, jobsBySession: {},
     })
-    const disposeManagerProjection = this.manager.subscribe(() => { this.projectList() })
+    this.jobsBaseline = createSnapshotStore<SessionJobsBaseline>({ ready: false })
+    const disposeManagerProjection = this.manager.subscribe(() => {
+      this.projectList()
+      this.projectJobsBaseline()
+    })
     rootCtx.effect(() => async () => {
       this.closed = true
       disposeManagerProjection()
@@ -388,6 +406,11 @@ export class ClientSessions implements ISessions {
    */
   handleControlFrame(frame: Parameters<SessionManager['handleControlFrame']>[0]): void {
     this.manager.handleControlFrame(frame)
+  }
+
+  /** Mark live control observations unavailable while the stream reconnects. */
+  handleControlUnavailable(): void {
+    this.manager.handleControlUnavailable()
   }
 
   /**
@@ -691,6 +714,13 @@ export class ClientSessions implements ISessions {
       }
     }
     this.list.set({ ids, byId, phase, subagentsByParent, jobsBySession })
+  }
+
+  /** Republish baseline readiness on its own store, so only job consumers re-render. */
+  private projectJobsBaseline(): void {
+    const ready = this.manager.getJobsBaselineReady()
+    if (this.jobsBaseline.getSnapshot().ready === ready) return
+    this.jobsBaseline.set({ ready })
   }
 
   private startScopeDrop(

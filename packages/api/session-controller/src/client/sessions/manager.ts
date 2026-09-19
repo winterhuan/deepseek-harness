@@ -118,6 +118,13 @@ export class SessionManager {
    * one representation.
    */
   private readonly jobsBySession = new Map<SessionId, readonly JobView[]>()
+  /**
+   * Whether the current control stream has supplied its complete baseline.
+   * Readiness is a control-stream property rather than a list property, so it
+   * travels on its own observation instead of the shared list snapshot; every
+   * flip still marks the notifier dirty, which republishes both.
+   */
+  private baselineReady = false
 
   private listSnapshotCache: SessionListSnapshot
   /** Entry-identity cache (reference stability): list rebuilds reuse the previous entry
@@ -586,6 +593,17 @@ export class SessionManager {
   }
 
   /**
+   * Whether the current control stream has supplied its complete baseline.
+   * Consumers compare job identity against the baseline only while this is true;
+   * before the first baseline, and after carrier loss or a terminal control
+   * failure, cached job rows are stale rather than authoritative.
+   * @returns true once a complete baseline replaced the process-local state.
+   */
+  getJobsBaselineReady(): boolean {
+    return this.baselineReady
+  }
+
+  /**
    * Read cached projection values for a Session that may exist only in a loaded subagent catalog.
    * @param sessionId - Session whose control or history baseline supplied projections.
    * @returns current values, or undefined before any projection store exists.
@@ -615,7 +633,14 @@ export class SessionManager {
     this.notifier.markDirty()
   }
 
+  /** Invalidate process-local observations until the replacement control baseline arrives. */
+  handleControlUnavailable(): void {
+    this.baselineReady = false
+    this.notifier.markDirty()
+  }
+
   private replaceControlBaseline(baseline: SessionControlBaseline): void {
+    this.baselineReady = true
     this.jobsBySession.clear()
     for (const [sessionId, jobs] of Object.entries(baseline.jobs)) {
       if (jobs.length > 0) this.jobsBySession.set(sessionId as SessionId, jobs)

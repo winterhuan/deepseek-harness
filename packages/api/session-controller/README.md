@@ -56,6 +56,8 @@ References keep local Session data, scoped Contexts, and history streams alive, 
 
 `SessionMediaReferences` mounts `GET|HEAD /api/file?path=<absolute path>` on the authenticated `connection.fetch` channel when `connection`, `fs`, and `attachments` are composed. It reads ordinary files through `ctx.fs`, including temporary paths outside registered workspaces and files in remote providers. Neither directory containment nor MIME categories restrict access; `mime-types` supplies the response type, with `application/octet-stream` for unknown extensions. GET reuses `readBytes` for preflight and ongoing byte limits; HEAD reads metadata only. All files use `ctx.attachments.imageLimits.maxImageBytes` (normally 20 MiB); exceeding this limit returns 413. Responses contain the complete file, ignore Range, and carry `private, no-store`, `nosniff`, and a sandbox CSP so directly opened HTML/SVG cannot execute with the API origin. The Client rewrite lives in `ui-chat` (`AssistantMarkdown`); audio/video responses are available, while Markdown audio/video player nodes remain separate work.
 
+Client sessions expose control-baseline readiness on `sessions.jobsBaseline`, separately from the cached `jobsBySession` mirror carried on `sessions.list`. Its `ready` is false before the first complete baseline, after carrier loss, or after a terminal control-stream failure, and becomes true when a full baseline replaces the process-local state. A connection-ready notification does not invalidate an accepted baseline. Consumers wait for that baseline before classifying an absent job as unavailable; reading a job snapshot never consumes process output.
+
 -----
 
 <a id="configuration"></a>

@@ -251,6 +251,12 @@ type ConversationTargetSources = {
   ObservableSnapshot<ConversationViewSnapshotMap[Target] | undefined>
 }
 
+/**
+ * The creative subsystem augments the view-target map, so every source set has
+ * to carry its key even though this bench never reads that target.
+ */
+type UnreadTargetSnapshot = ConversationViewSnapshotMap['creative-production'] | undefined
+
 /** Real-stack bench: root Context + real SlotRegistry ring + the plugin fiber. */
 async function bench(snapshot = historySnapshot(NODES)) {
   const runtime = await SlotTestRuntime.create()
@@ -272,6 +278,7 @@ async function bench(snapshot = historySnapshot(NODES)) {
   const targetSources: ConversationTargetSources = {
     chat: createSnapshotStore<ChatSnapshot | undefined>(undefined),
     trajectory: trajectoryStore,
+    'creative-production': createSnapshotStore<UnreadTargetSnapshot>(undefined),
   }
   const binding: ConversationBinding = {
     snapshot: conversationStore,

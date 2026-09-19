@@ -1,7 +1,7 @@
 import { Context } from '@deepseek-ai/cordis'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 import type {
-  ISessions, SessionListState, SessionReference, SessionSummary,
+  ISessions, SessionJobsBaseline, SessionListState, SessionReference, SessionSummary,
 } from '@deepseek-ai/dsh-api-session-controller/client'
 import type { SubagentAddress } from '@deepseek-ai/dsh-subagent/client'
 import type {
@@ -128,6 +128,7 @@ interface RetainedSession {
 
 class FakeSessions implements ISessions {
   readonly list: MutableSource<SessionListState>
+  readonly jobsBaseline = new MutableSource<SessionJobsBaseline>({ ready: true })
   readonly create: ReturnType<typeof vi.fn<ISessions['create']>>
   readonly fork = vi.fn<ISessions['fork']>(async () => sid('forked'))
   readonly retained: RetainedSession[] = []
