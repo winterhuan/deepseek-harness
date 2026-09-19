@@ -1,0 +1,99 @@
+- dialog "技能":
+  - heading "技能" [level=2]
+  - paragraph: 查看当前会话可用的技能及其完整说明。
+  - button "关闭":
+    - img
+  - textbox "搜索技能":
+    - /placeholder: 搜索技能…
+    - text: story-setup
+  - list:
+    - listitem:
+      - button "story-setup 在当前 DSH 工作区初始化或校验小说工程，保留已有正文、设定、大纲和追踪数据。用于“准备写书”“创建小说项目”“修复工程结构”；不部署 Agent 平台文件或修改运行环境。 bundled · creative":
+        - code: story-setup
+        - text: 在当前 DSH 工作区初始化或校验小说工程，保留已有正文、设定、大纲和追踪数据。用于“准备写书”“创建小说项目”“修复工程结构”；不部署 Agent 平台文件或修改运行环境。 bundled · creative
+  - heading "story-setup" [level=2]:
+    - code: story-setup
+  - region "技能详情":
+    - paragraph: 在当前 DSH 工作区初始化或校验小说工程，保留已有正文、设定、大纲和追踪数据。用于“准备写书”“创建小说项目”“修复工程结构”；不部署 Agent 平台文件或修改运行环境。
+    - region "技能信息":
+      - heading "技能信息" [level=3]
+      - term: 来源
+      - definition: bundled
+      - term: 提供方
+      - definition: creative
+      - term: 路径
+      - definition:
+        - code: {{sourceRoot}}/packages/creative/creative/knowledge/creative/skills/story-setup/SKILL.md
+      - term: 资源
+      - definition:
+        - code: {{sourceRoot}}/packages/creative/creative/knowledge/creative/skills/story-setup
+    - text: 参考文件
+    - combobox "参考文件":
+      - option "技能说明" [selected]
+      - option "references/agent-references/agent-quality.md"
+      - option "references/agent-references/agent-reference-profiles.md"
+      - option "references/agent-references/anti-ai-writing.md"
+      - option "references/agent-references/banned-words.md"
+      - option "references/agent-references/character-basics.md"
+      - option "references/agent-references/character-design-methods.md"
+      - option "references/agent-references/character-relations.md"
+      - option "references/agent-references/dialogue-mastery.md"
+      - option "references/agent-references/emotional-arc-design.md"
+      - option "references/agent-references/format-and-structure.md"
+      - option "references/agent-references/genre-prose-cards.md"
+      - option "references/agent-references/genre-prose-cards/东方仙侠.md"
+      - option "references/agent-references/genre-prose-cards/传统玄幻.md"
+      - option "references/agent-references/genre-prose-cards/历史古代.md"
+      - option "references/agent-references/genre-prose-cards/历史脑洞.md"
+      - option "references/agent-references/genre-prose-cards/双男主.md"
+      - option "references/agent-references/genre-prose-cards/古言脑洞.md"
+      - option "references/agent-references/genre-prose-cards/古风世情.md"
+      - option "references/agent-references/genre-prose-cards/女频悬疑.md"
+      - option "references/agent-references/genre-prose-cards/女频种田.md"
+      - option "references/agent-references/genre-prose-cards/宫斗宅斗.md"
+      - option "references/agent-references/genre-prose-cards/年代.md"
+      - option "references/agent-references/genre-prose-cards/快穿.md"
+      - option "references/agent-references/genre-prose-cards/悬疑灵异.md"
+      - option "references/agent-references/genre-prose-cards/悬疑脑洞.md"
+      - option "references/agent-references/genre-prose-cards/战神赘婿.md"
+      - option "references/agent-references/genre-prose-cards/抗战谍战.md"
+      - option "references/agent-references/genre-prose-cards/星光璀璨.md"
+      - option "references/agent-references/genre-prose-cards/民国言情.md"
+      - option "references/agent-references/genre-prose-cards/游戏体育.md"
+      - option "references/agent-references/genre-prose-cards/玄幻脑洞.md"
+      - option "references/agent-references/genre-prose-cards/玄幻言情.md"
+      - option "references/agent-references/genre-prose-cards/现言脑洞.md"
+      - option "references/agent-references/genre-prose-cards/科幻末世.md"
+      - option "references/agent-references/genre-prose-cards/职场婚恋.md"
+      - option "references/agent-references/genre-prose-cards/西方奇幻.md"
+      - option "references/agent-references/genre-prose-cards/豪门总裁.md"
+      - option "references/agent-references/genre-prose-cards/都市修真.md"
+      - option "references/agent-references/genre-prose-cards/都市日常.md"
+      - option "references/agent-references/genre-prose-cards/都市种田.md"
+      - option "references/agent-references/genre-prose-cards/都市脑洞.md"
+      - option "references/agent-references/genre-prose-cards/都市高武.md"
+      - option "references/agent-references/genre-prose-cards/青春甜宠.md"
+      - option "references/agent-references/genre-readers.md"
+      - option "references/agent-references/long-chapter-hooks.md"
+      - option "references/agent-references/long-emotional-methods.md"
+      - option "references/agent-references/long-genre-catalog.md"
+      - option "references/agent-references/long-genre-mechanics.md"
+      - option "references/agent-references/long-quality.md"
+      - option "references/agent-references/long-reversal.md"
+      - option "references/agent-references/long-suspense.md"
+      - option "references/agent-references/opening-design.md"
+      - option "references/agent-references/outline-conflict.md"
+      - option "references/agent-references/outline-methods.md"
+      - option "references/agent-references/outline-rhythm.md"
+      - option "references/agent-references/plot-core-methods.md"
+      - option "references/agent-references/short-chapter-hooks.md"
+      - option "references/agent-references/short-emotional-methods.md"
+      - option "references/agent-references/short-genre-formulas.md"
+      - option "references/agent-references/short-paragraph-hooks.md"
+      - option "references/agent-references/short-quality.md"
+      - option "references/agent-references/short-reversal.md"
+      - option "references/agent-references/short-suspense.md"
+      - option "references/agent-references/style-combat-face.md"
+      - option "references/agent-references/style-genre-modules.md"
+      - option "references/agent-references/writing-craft.md"
+    - region "完整说明": "完整说明 <creative-dsh-integration> This Skill is a native contribution to the current DeepSeek Harness session. DSH owns the workspace, model, preset, permissions, Session Log, tools, subagents, cancellation, resume, and Agent UI. Never start another Agent runtime, session transport, Dashboard, SSE stream, polling loop, or model configuration. Workflow stages are Skills: load each one with the skill tool and its exact catalog name in the name argument. For a $name or /name reference, omit the prefix. Loading supplies instructions to the current Agent. creative_role accepts only the novel specialist names in its role enum; never pass a Skill name as role. If delegation is needed and subagent is visible, send a self-contained task that tells the child to load the named Skill with skill before working. Roles do not require project-local platform files or deployment markers. Use only DSH-visible tools. DSH sandbox and permission policy remain authoritative. </creative-dsh-integration> # story-setup — DSH 原生小说工程初始化 只初始化或校验当前 DSH workspace 中的小说数据，不部署任何 Agent 平台文件。 1. 检查现有正文、设定、大纲和追踪文件，已有内容绝不覆盖。 2. 根据用户声明与现有结构判断长篇/短篇；无法可靠判断时请求确认。 3. 长篇按需建立 正文/、设定/、大纲/、追踪/，并准备追踪/_tracking-state.json；第一章正文落盘前必须有对应细纲。短篇保持轻量结构，不强加长篇 Tracking。 4. 需要架构、角色或研究工作时，通过 creative_role 调用已打包 Role；不要检查或生成 .claude、.codex、.opencode、.agents、.zcode、AGENTS.md 或 .story-deployed。 5. 复述创建、保留和待用户确认的文件。不要配置模型、权限、Hooks 或 Session。 题材、角色、节奏、冲突、开篇和写作方法资料位于 references/agent-references/；只加载当前任务需要的文件。"

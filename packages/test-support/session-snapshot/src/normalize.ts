@@ -11,6 +11,7 @@ import {
 } from '@deepseek-ai/dsh-session'
 import { prepareSessionSnapshotFixtureForComparison } from '@deepseek-ai/dsh-llm-replay'
 import { redactSessionSnapshotIds } from './identity.ts'
+import { normalizeProductionJobReferences } from './production-jobs.ts'
 
 const SESSION_ID = '{{sessionId}}'
 const MESSAGE_ID = '{{messageId}}'
@@ -329,7 +330,8 @@ export function normalizeStdout(
  * catalog child-creation clocks are zeroed; and all volatile strings are
  * scrubbed. Projected inputs remain
  * projected. Packed `data.dt` gaps are normalized even when the projected row
- * omits its `time0` anchor.
+ * omits its `time0` anchor. Creative job references retain distinct execution
+ * epochs through stable ordinals in Native metadata/content and PTC content.
  * Output is JSONL in the same shape as the input — one compact record per
  * line.
  *
@@ -346,8 +348,9 @@ export function normalizeSessionLog(
   const cwdPathMode = options.cwdPathMode ?? 'canonical'
   const identityMode = options.identityMode ?? 'legacy'
   const lines = rawLog.split('\n').filter(line => line.trim().length > 0)
-  const records = lines.map((line) => {
-    const record = JSON.parse(line) as Record<string, unknown>
+  const parsed = lines.map(line => JSON.parse(line) as Record<string, unknown>)
+  normalizeProductionJobReferences(parsed)
+  const records = parsed.map((record) => {
     if (record.type === 'session') {
       if ('createdAt' in record) record.createdAt = 0
     } else if (isPackedFixtureRow(record)) {

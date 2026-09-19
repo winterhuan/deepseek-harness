@@ -1,0 +1,295 @@
+/** Workspace layout and persisted writing through the shipped Web profile. */
+import { mkdtemp, mkdir, readFile, realpath, rm, writeFile } from 'node:fs/promises'
+import { tmpdir } from 'node:os'
+import { fileURLToPath } from 'node:url'
+import { basename, join } from 'node:path'
+import type { Browser, Page } from 'playwright'
+import { chromium } from 'playwright'
+import { afterAll, beforeAll, describe, expect, it, onTestFailed } from 'vitest'
+import {
+  acknowledgeReloadConnectionLoss, assertFinalWorkspaceSnapshot, captureStableAria,
+  compareOrRefreshGolden, fixtureUserPrompts,
+  selectedSessionFixture, watchConsole, webSnapshotMode,
+} from './scaffold.ts'
+import {
+  connectFreshWorkspaceZh, expandTurnProcesses, newChinesePage,
+  REPO_ROOT, saveFailureShot, writeComposerDraft,
+} from './support.ts'
+import { compareWebProfileSession, launchWebProfile, type WebProfileProcess } from './profile-scaffold.ts'
+
+const SNAPSHOT_DIR = fileURLToPath(new URL('../../../snapshots/web/workbench-presence', import.meta.url))
+const EXPECTED_DIR = fileURLToPath(new URL('./expected/workbench-presence', import.meta.url))
+const SCREENSHOT_DIR = fileURLToPath(new URL('../../../.artifacts/screenshots', import.meta.url))
+const OVERLAY = fileURLToPath(new URL('./workbench-presence.overlay.yml', import.meta.url))
+const MODE = webSnapshotMode()
+
+describe('web profile: workspace and conversation layout', () => {
+  let host: WebProfileProcess | undefined
+  let browser: Browser | undefined
+  let page: Page
+  let tripwire: ReturnType<typeof watchConsole>
+  let world: string
+  let fixture: string
+  let prompt: string
+
+  beforeAll(async () => {
+    fixture = await selectedSessionFixture(join(SNAPSHOT_DIR, 'session.jsonl'))
+    const prompts = fixtureUserPrompts(await readFile(fixture, 'utf8'))
+    expect(prompts).toHaveLength(1)
+    prompt = prompts[0]!
+    world = await realpath(await mkdtemp(join(tmpdir(), 'dsh-creative-profile-')))
+    await mkdir(join(world, 'sessions'))
+    host = await launchWebProfile({ world, fixture, overlay: OVERLAY, mode: MODE })
+    browser = await chromium.launch()
+    page = await newChinesePage(browser)
+    tripwire = watchConsole(page)
+    await page.goto(host.url, { waitUntil: 'load' })
+    await page.waitForSelector('[class*="frame"]', { timeout: 30_000 })
+    await page.getByRole('button', { name: '继续', exact: true }).click()
+    await connectFreshWorkspaceZh(page, world)
+  }, 120_000)
+
+  afterAll(async () => {
+    const failures: unknown[] = []
+    await browser?.close().catch((error: unknown) => failures.push(error))
+    await host?.close().catch((error: unknown) => failures.push(error))
+    if (world !== undefined) await rm(world, { recursive: true, force: true }).catch((error: unknown) => failures.push(error))
+    if (failures.length > 0) throw new AggregateError(failures, 'Web profile cleanup failed')
+  })
+
+  it('keeps Creative in the Sidebar and preserves drafts across tabs, fullscreen, and closure', async () => {
+    onTestFailed(async () => {
+      if (page !== undefined) await saveFailureShot(page, 'web-e2e-workbench-presence')
+      console.error(host?.output())
+    })
+    const input = page.locator('[data-composer-input][contenteditable="true"]').first()
+    const scroller = page.locator('[data-conversation-scroll]').first()
+    const panel = page.locator('[data-sidebar-right-panel]')
+    await input.waitFor({ timeout: 10_000 })
+    expect(await page.locator('[data-workspace-open], .creative-workspace').count()).toBe(0)
+    await writeComposerDraft(page, input, prompt)
+    await input.press('Enter')
+    await page.getByText('DONE', { exact: true }).waitFor({ timeout: 60_000 })
+    expect(await page.locator('style[data-plugin-css="@deepseek-ai/dsh-creative/plugin.css"]').count()).toBe(1)
+    expect(await page.locator('.creative-workspace').count()).toBe(0)
+    await page.locator('[data-sidebar-right-expand]').click()
+    await page.locator('[data-sidebar-right-guide-entry="creative"]').click()
+    await expect.poll(() => panel.getAttribute('data-sidebar-right-panel')).toBe('push')
+    await page.getByRole('tab', { name: '预览', exact: true }).click()
+    const preview = page.locator('.creative-markdown')
+    await preview.getByText('春天来了。', { exact: true }).waitFor()
+    const workspaceCwd = join(world, 'workspace')
+    expect(await readFile(join(workspaceCwd, '正文/第001章.md'), 'utf8')).toBe('春天来了。')
+    await expandTurnProcesses(page)
+    await mkdir(EXPECTED_DIR, { recursive: true })
+    const screenshots = join(SCREENSHOT_DIR, basename(world))
+    await mkdir(screenshots, { recursive: true })
+    await page.screenshot({ path: join(screenshots, 'sidebar.png'), fullPage: true })
+    await compareOrRefreshGolden(join(EXPECTED_DIR, 'split.aria.txt'), await captureStableAria(page, '[data-sidebar-right-panel]', workspaceCwd), MODE)
+
+    const skills = page.getByRole('button', { name: '技能', exact: true })
+    expect(await skills.count()).toBe(1)
+    await skills.click()
+    const viewer = page.getByRole('dialog', { name: '技能', exact: true })
+    await expect.poll(() => viewer.evaluate(dialog => dialog.getBoundingClientRect().height / window.innerHeight)).toBeGreaterThan(0.85)
+    const firstSkill = viewer.getByRole('listitem').first().locator('code')
+    await firstSkill.waitFor()
+    await viewer.getByRole('heading', { name: await firstSkill.innerText(), exact: true }).waitFor()
+    await viewer.getByRole('region', { name: '技能信息', exact: true }).waitFor()
+    const search = viewer.getByRole('textbox', { name: '搜索技能', exact: true })
+    await search.fill('story-setup')
+    const setupSkill = viewer.getByRole('button', { name: /^story-setup /u })
+    await setupSkill.waitFor()
+    expect(await viewer.getByRole('listitem').count()).toBe(1)
+    await setupSkill.click()
+    const instructions = viewer.getByRole('region', { name: '完整说明', exact: true })
+    const instructionBody = instructions.locator('pre')
+    const reader = viewer.getByRole('region', { name: '技能详情', exact: true })
+    await expect.poll(() => instructionBody.innerText()).toContain('story-setup — DSH 原生小说工程初始化')
+    const fitsHorizontally = () => viewer.evaluate((dialog) => {
+      const bounds = dialog.getBoundingClientRect()
+      return bounds.left >= 0 && bounds.right <= window.innerWidth
+        && [dialog, ...dialog.querySelectorAll('*')].every(element =>
+          element.clientWidth === 0 || element.scrollWidth <= element.clientWidth + 1)
+    })
+    await expect.poll(fitsHorizontally).toBe(true)
+    expect(await search.isVisible()).toBe(true)
+    await search.fill('story-review')
+    await viewer.getByRole('button', { name: /^story-review /u }).click()
+    await expect.poll(() => instructionBody.innerText()).toContain('Rubric Source')
+    await instructionBody.hover()
+    await page.mouse.wheel(0, 1_000_000)
+    const lastCharacterIsVisible = () => instructionBody.evaluate((pre) => {
+      const text = pre.firstChild!
+      const end = text.textContent!.trimEnd().length
+      const range = document.createRange()
+      range.setStart(text, end - 1)
+      range.setEnd(text, end)
+      const bounds = range.getBoundingClientRect()
+      return pre.contains(document.elementFromPoint(bounds.left + bounds.width / 2, bounds.top + bounds.height / 2))
+    })
+    await expect.poll(lastCharacterIsVisible).toBe(true)
+    expect(await reader.evaluate(element => element.scrollTop)).toBeGreaterThan(0)
+    expect(await instructionBody.evaluate(element => element.scrollTop)).toBe(0)
+    expect(await search.isVisible()).toBe(true)
+    await search.fill('story-setup')
+    await setupSkill.click()
+    await expect.poll(() => instructionBody.innerText()).toContain('story-setup — DSH 原生小说工程初始化')
+    expect(await reader.evaluate(element => element.scrollTop)).toBe(0)
+    expect(await viewer.getByText('来源', { exact: true }).isVisible()).toBe(true)
+    const references = viewer.getByRole('combobox', { name: '参考文件', exact: true })
+    const referencePath = 'references/agent-references/character-basics.md'
+    await references.selectOption(referencePath)
+    const referenceContent = await readFile(join(REPO_ROOT, 'packages/creative/creative/knowledge/creative/skills/story-setup', referencePath), 'utf8')
+    await expect.poll(async () => (await instructionBody.innerText()).trimEnd()).toBe(referenceContent.trimEnd())
+    await page.screenshot({ path: join(screenshots, 'skill-viewer-reference.png'), fullPage: true })
+    await viewer.getByRole('button', { name: '返回技能说明', exact: true }).click()
+    await expect.poll(() => instructionBody.innerText()).toContain('story-setup — DSH 原生小说工程初始化')
+    await page.setViewportSize({ width: 480, height: 760 })
+    await expect.poll(fitsHorizontally).toBe(true)
+    await expect.poll(() => viewer.evaluate(dialog => dialog.getBoundingClientRect().height / window.innerHeight)).toBeGreaterThan(0.85)
+    expect(await search.isVisible()).toBe(false)
+    await instructionBody.hover()
+    await page.mouse.wheel(0, 1_000_000)
+    await expect.poll(lastCharacterIsVisible).toBe(true)
+    await page.mouse.wheel(0, -1_000_000)
+    await expect.poll(() => reader.evaluate(element => element.scrollTop)).toBe(0)
+    await expect.poll(() => viewer.getByRole('heading', { name: '技能', exact: true }).evaluate(heading =>
+      heading.getBoundingClientRect().top >= heading.closest('[role="dialog"]')!.getBoundingClientRect().top)).toBe(true)
+    await page.screenshot({ path: join(screenshots, 'skill-viewer-narrow.png'), fullPage: true })
+    await viewer.getByRole('button', { name: '返回列表', exact: true }).click()
+    expect(await search.isVisible()).toBe(true)
+    await expect.poll(() => search.inputValue()).toBe('story-setup')
+    await setupSkill.click()
+    await expect.poll(() => instructionBody.innerText()).toContain('story-setup — DSH 原生小说工程初始化')
+    await page.setViewportSize({ width: 1680, height: 1000 })
+    const viewerAria = (await viewer.ariaSnapshot()).trimEnd().replaceAll(REPO_ROOT, '{{sourceRoot}}/')
+    await compareOrRefreshGolden(join(EXPECTED_DIR, 'skill-viewer.aria.txt'), viewerAria, MODE)
+    await page.screenshot({ path: join(screenshots, 'skill-viewer.png'), fullPage: true })
+    await search.fill('')
+    await expect.poll(() => viewer.getByRole('listitem').count()).toBeGreaterThan(1)
+    await page.screenshot({ path: join(screenshots, 'skill-viewer-browse.png'), fullPage: true })
+    await viewer.getByRole('button', { name: '关闭', exact: true }).click()
+    await viewer.waitFor({ state: 'hidden' })
+    expect(await skills.evaluate(element => element === document.activeElement)).toBe(true)
+    await skills.click()
+    await viewer.waitFor({ state: 'visible' })
+    await page.keyboard.press('Escape')
+    await viewer.waitFor({ state: 'hidden' })
+
+    await writeComposerDraft(page, input, 'Draft: 保留这份未发送的草稿')
+    await expect.poll(() => input.innerText()).toBe('Draft: 保留这份未发送的草稿')
+    const inputNode = await input.elementHandle()
+    const scrollerNode = await scroller.elementHandle()
+    await page.getByRole('tab', { name: '源码', exact: true }).click()
+    const editor = page.getByRole('textbox', { name: '正文/第001章.md', exact: true })
+    await editor.fill('春天来了。\n未保存的创作草稿')
+    await panel.locator('[data-dockkit-add-tab]').click()
+    await page.locator('[data-sidebar-right-guide-entry="files"]').click()
+    await page.locator('[data-files-state="tree"]').waitFor()
+    expect(await page.locator('.creative-workspace').count()).toBe(0)
+    const creativeTab = page.locator('[data-dockkit-tab]').filter({ hasText: '创作工作台' })
+    expect(await creativeTab.count()).toBe(1)
+    await creativeTab.click()
+    await expect.poll(() => editor.inputValue()).toBe('春天来了。\n未保存的创作草稿')
+    await editor.fill('春天来了。')
+    await page.getByRole('tab', { name: '预览', exact: true }).click()
+
+    await panel.locator('[data-sidebar-right-mode="fullscreen"]').click()
+    await expect.poll(() => panel.getAttribute('data-sidebar-right-panel')).toBe('fullscreen')
+    await preview.getByText('春天来了。', { exact: true }).waitFor()
+    await page.screenshot({ path: join(screenshots, 'fullscreen.png'), fullPage: true })
+    await page.setViewportSize({ width: 680, height: 760 })
+    await expect.poll(() => panel.getAttribute('data-sidebar-right-panel')).toBe('fullscreen')
+    await page.screenshot({ path: join(screenshots, 'narrow.png'), fullPage: true })
+    await compareOrRefreshGolden(join(EXPECTED_DIR, 'narrow.aria.txt'), await captureStableAria(page, '[data-sidebar-right-panel]', workspaceCwd), MODE)
+    await panel.locator('[data-sidebar-right-toggle]').click()
+    await page.locator('[data-sidebar-right-expand]').waitFor()
+    expect(await input.innerText()).toBe('Draft: 保留这份未发送的草稿')
+    expect(await input.evaluate((element, original) => element === original, inputNode)).toBe(true)
+    expect(await scroller.evaluate((element, original) => element === original, scrollerNode)).toBe(true)
+    expect(await input.isVisible()).toBe(true)
+    const warningStart = tripwire.warnings.length
+    await page.reload({ waitUntil: 'load' })
+    await page.locator('[data-sidebar-right-expand]').waitFor()
+    acknowledgeReloadConnectionLoss(tripwire, warningStart)
+    // The saved layout restores the Creative tab inside the collapsed column, so
+    // the workbench is present but off-edge: hidden, not absent.
+    await expect.poll(() => page.locator('.creative-workspace').isVisible()).toBe(false)
+    await expandTurnProcesses(page)
+    await page.locator('[data-tool="write"]').getByRole('button', { name: '正文/第001章.md', exact: true }).click()
+    await expect.poll(() => panel.getAttribute('data-sidebar-right-panel')).toBe('fullscreen')
+    await preview.getByText('春天来了。', { exact: true }).waitFor()
+    await page.setViewportSize({ width: 1680, height: 1000 })
+    // The saved layout carries the mode too. The narrow viewport above showed
+    // fullscreen either way, so leaving it is an explicit step now rather than a
+    // reload side effect.
+    await panel.locator('[data-sidebar-right-mode="push"]').click()
+    await expect.poll(() => panel.getAttribute('data-sidebar-right-panel')).toBe('push')
+    expect(await creativeTab.count()).toBe(1)
+    expect(await page.locator('[data-workspace-open]').count()).toBe(0)
+    expect(await input.isVisible()).toBe(true)
+    await page.getByRole('tab', { name: '源码', exact: true }).click()
+    await editor.fill('第一份未保存草稿')
+    await writeFile(join(workspaceCwd, '正文/第002章.md'), '第二章正文')
+    await page.getByRole('button', { name: '刷新项目文件', exact: true }).click()
+    await page.locator('button[data-file-path="正文/第002章.md"]').click()
+    await page.getByRole('tab', { name: '源码', exact: true }).click()
+    const secondEditor = page.getByRole('textbox', { name: '正文/第002章.md', exact: true })
+    await secondEditor.fill('第二份未保存草稿')
+    await page.locator('[data-tool="write"]').getByRole('button', { name: '正文/第001章.md', exact: true }).click()
+    await page.getByRole('tab', { name: '源码', exact: true }).click()
+    await expect.poll(() => editor.inputValue()).toBe('第一份未保存草稿')
+    await page.locator('button[data-file-path="正文/第002章.md"]').click()
+    await page.getByRole('tab', { name: '源码', exact: true }).click()
+    await expect.poll(() => secondEditor.inputValue()).toBe('第二份未保存草稿')
+    await rm(join(workspaceCwd, '正文/第001章.md'))
+    await page.getByRole('button', { name: '刷新项目文件', exact: true }).click()
+    await expect.poll(() => page.locator('button[data-file-path="正文/第001章.md"]').count()).toBe(0)
+    await rm(join(workspaceCwd, '正文/第002章.md'))
+    await page.getByRole('button', { name: '刷新项目文件', exact: true }).click()
+    await expect.poll(() => page.locator('button[data-file-path="正文/第002章.md"]').count()).toBe(0)
+    await writeFile(join(workspaceCwd, '正文/第002章.md'), '第二章正文')
+    await page.getByRole('button', { name: '刷新项目文件', exact: true }).click()
+    await expect.poll(() => secondEditor.inputValue()).toBe('第二份未保存草稿')
+    await rm(join(workspaceCwd, '正文/第002章.md'))
+    await page.getByRole('button', { name: '刷新项目文件', exact: true }).click()
+    await expect.poll(() => page.locator('button[data-file-path="正文/第002章.md"]').count()).toBe(0)
+    await writeFile(join(workspaceCwd, '正文/第001章.md'), '春天来了。')
+    await page.getByRole('button', { name: '刷新项目文件', exact: true }).click()
+    await page.locator('button[data-file-path="正文/第001章.md"]').click()
+    await page.getByRole('tab', { name: '源码', exact: true }).click()
+    await expect.poll(() => editor.inputValue()).toBe('第一份未保存草稿')
+    expect(await page.locator('style[data-plugin-css="@deepseek-ai/dsh-creative/plugin.css"]').count()).toBe(1)
+
+    // The long-form manuscript would otherwise win the default-document selection.
+    await rm(join(workspaceCwd, '正文/第001章.md'))
+    await mkdir(join(workspaceCwd, '灯下'))
+    await writeFile(join(workspaceCwd, '灯下/设定.md'), '短篇设定。\n')
+    await writeFile(join(workspaceCwd, '灯下/小节大纲.md'), '短篇大纲。\n')
+    await page.getByRole('button', { name: '刷新项目文件', exact: true }).click()
+    await page.locator('button[data-file-path="灯下/小节大纲.md"]').waitFor({ state: 'attached' })
+    await page.getByRole('tab', { name: '短剧', exact: true }).click()
+    await page.getByRole('tab', { name: '小说', exact: true }).click()
+    await page.getByRole('tab', { name: '预览', exact: true }).click()
+    await preview.getByText('短篇大纲。', { exact: true }).waitFor()
+    await compareOrRefreshGolden(join(EXPECTED_DIR, 'short-story-planning.aria.txt'), await captureStableAria(page, '[data-sidebar-right-panel]', workspaceCwd), MODE)
+    await page.screenshot({ path: join(screenshots, 'short-story-planning.png'), fullPage: true })
+
+    await writeFile(join(workspaceCwd, '灯下/正文.md'), '灯下的故事。\n')
+    await page.getByRole('button', { name: '刷新项目文件', exact: true }).click()
+    await page.locator('button[data-file-path="灯下/正文.md"]').waitFor({ state: 'attached' })
+    await page.getByRole('tab', { name: '短剧', exact: true }).click()
+    await page.getByRole('tab', { name: '小说', exact: true }).click()
+    await preview.getByText('灯下的故事。', { exact: true }).waitFor()
+    await compareOrRefreshGolden(join(EXPECTED_DIR, 'short-story-prose.aria.txt'), await captureStableAria(page, '[data-sidebar-right-panel]', workspaceCwd), MODE)
+    await page.screenshot({ path: join(screenshots, 'short-story-prose.png'), fullPage: true })
+    await writeFile(join(workspaceCwd, '正文/第001章.md'), '春天来了。')
+    await assertFinalWorkspaceSnapshot(SNAPSHOT_DIR, workspaceCwd)
+    expect(tripwire.pageErrors).toEqual([])
+    expect(tripwire.warnings).toEqual([])
+
+    await host?.close()
+    await compareWebProfileSession({ world, fixture, mode: MODE, origin: new URL(host!.url).origin })
+  }, 180_000)
+})

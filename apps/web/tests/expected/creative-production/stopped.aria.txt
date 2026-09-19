@@ -1,0 +1,14 @@
+- text: 图片与视频先预检、后确认。内置契约支持 GPT Image 2 / Seedance；实际账号、模型与可用性由当前 DSH 运行环境决定。
+- article:
+  - strong: SHOT-001
+  - text: 成片
+  - group: 查看投产提示词
+  - text: 计划产量：12 项
+  - paragraph: 1/2 个已登记作业结束；不表示整批素材全部成功。
+  - strong: SHOT-001
+  - code: bash-1
+  - text: "已停止signal: SIGTERM"
+  - strong: SHOT-002
+  - code: bash-2
+  - text: 运行中
+  - button "停止该作业"

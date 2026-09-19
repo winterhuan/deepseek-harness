@@ -1,0 +1,3 @@
+- insert:
+    - id: creative-skill-snapshot
+      name: '../../../packages/creative/creative/tests/fixtures/skill-snapshot.ts'
