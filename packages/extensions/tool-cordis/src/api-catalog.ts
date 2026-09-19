@@ -2429,6 +2429,34 @@ export const SERVICE_API: readonly ServiceApiEntry[] = [
     ],
   },
   {
+    key: 'skillViewerCatalog',
+    summary: 'Host service backing `ctx.remote.skillViewer` without activating a cold Agent.',
+    description: 'Host service backing `ctx.remote.skillViewer` without activating a cold Agent.',
+    methods: [
+      {
+        signature: '@Remote async listDetails(request: SkillViewerListRequest, signal: AbortSignal): Promise<SkillViewerListValue>',
+        description: 'List the user-invocable skills visible to one Session composition, with the source and provider metadata the composer catalog omits.',
+        parameters: [{ name: 'request', description: 'Session identity whose cwd and preset select the catalog view.' }, { name: 'signal', description: 'caller lifetime carried by the Remote transport; admitted catalog reads retain their existing completion semantics.' }],
+        returns: 'user-invocable skill metadata without bodies, plus whether a provider observation was incomplete.',
+        throws: ['RemoteError when the Session cannot be inspected or no registry can serve it.'],
+      },
+      {
+        signature: '@Remote async get(request: SkillViewerGetRequest, signal: AbortSignal): Promise<SkillViewerGetValue>',
+        description: 'Load one user-invocable skill body for viewer presentation.',
+        parameters: [{ name: 'request', description: 'Session identity selecting the catalog view plus the exact skill name from the viewer list.' }, { name: 'signal', description: 'caller lifetime used to cancel reference discovery.' }],
+        returns: 'the full skill with body content and its local reference listing.',
+        throws: ['RemoteError when the Session cannot be inspected, the name is invalid, or no user-invocable skill with this name is available.'],
+      },
+      {
+        signature: '@Remote async readReference(request: SkillViewerReferenceRequest, signal: AbortSignal): Promise<SkillViewerReferenceValue>',
+        description: 'Read one local reference of a user-invocable skill without starting an Agent.',
+        parameters: [{ name: 'request', description: 'Session, skill name, and relative file path under references/.' }, { name: 'signal', description: 'caller lifetime used to cancel file reading.' }],
+        returns: 'a bounded UTF-8 preview with explicit truncation and file-size metadata.',
+        throws: ['RemoteError when the Session or skill is unavailable, the path is unsafe, or the file cannot be read as text.'],
+      },
+    ],
+  },
+  {
     key: 'spillStore',
     summary: 'Abstract spill storage service.',
     description: 'Abstract spill storage service. Subclass, implement saveText, and load the subclass as a plugin — it registers as `ctx.spillStore` (one implementation per context; loading a second throws, cordis\' standard duplicate-service behavior).\n\nSemantics every implementation must honor:\n\n- saveText persists the FULL `content` verbatim and returns an opaque locator, exact byte length, and model-facing retrieval guidance.\n- Storage is scoped by the request\'s SaveTextSpill.owner session; the backend chooses a private (not world-readable) location and a collision-free name derived from — never equal to — the caller\'s `suggestedName`.\n- `saveText` REJECTS on a real storage failure (permissions, ENOSPC, backend unavailable); the caller decides how to degrade (the spill policy treats a rejection as best-effort and keeps the inline result).',
@@ -6299,6 +6327,42 @@ export const TYPE_API: readonly TypeApiEntry[] = [
   {
     name: 'SkillSummary',
     declaration: 'export interface SkillSummary {\n    readonly path?: string;\n    readonly name: string;\n    readonly description: string;\n    readonly whenToUse?: string;\n    readonly invocation: SkillInvocationPolicy;\n    readonly source: SkillSource;\n    readonly provider: string;\n    readonly resourceBase?: SkillResourceBase;\n}',
+  },
+  {
+    name: 'SkillViewerEntry',
+    declaration: 'export interface SkillViewerEntry {\n    readonly name: string;\n    readonly description: string;\n    readonly whenToUse?: string;\n    readonly modelInvocable: boolean;\n    readonly userInvocable: true;\n    readonly source: string;\n    readonly provider: string;\n}',
+  },
+  {
+    name: 'SkillViewerGetRequest',
+    declaration: 'export interface SkillViewerGetRequest {\n    readonly sessionId: SessionId;\n    readonly name: string;\n}',
+  },
+  {
+    name: 'SkillViewerGetValue',
+    declaration: 'export interface SkillViewerGetValue {\n    readonly name: string;\n    readonly description: string;\n    readonly whenToUse?: string;\n    readonly modelInvocable: boolean;\n    readonly userInvocable: true;\n    readonly source: string;\n    readonly provider: string;\n    readonly path?: string;\n    readonly resourceBase?: SkillViewerResourceBase;\n    readonly content: string;\n    readonly references: SkillViewerReferences | null;\n}',
+  },
+  {
+    name: 'SkillViewerListRequest',
+    declaration: 'export interface SkillViewerListRequest {\n    readonly sessionId: SessionId;\n}',
+  },
+  {
+    name: 'SkillViewerListValue',
+    declaration: 'export interface SkillViewerListValue {\n    readonly skills: readonly SkillViewerEntry[];\n    readonly stale: boolean;\n}',
+  },
+  {
+    name: 'SkillViewerReferenceRequest',
+    declaration: 'export interface SkillViewerReferenceRequest extends SkillViewerGetRequest {\n    readonly path: string;\n}',
+  },
+  {
+    name: 'SkillViewerReferences',
+    declaration: 'export interface SkillViewerReferences {\n    readonly files: readonly string[];\n    readonly truncated: boolean;\n}',
+  },
+  {
+    name: 'SkillViewerReferenceValue',
+    declaration: 'export interface SkillViewerReferenceValue {\n    readonly path: string;\n    readonly content: string;\n    readonly bytes: number;\n    readonly truncated: boolean;\n}',
+  },
+  {
+    name: 'SkillViewerResourceBase',
+    declaration: 'export type SkillViewerResourceBase = {\n    readonly kind: \'directory\';\n    readonly path: string;\n} | {\n    readonly kind: \'url\';\n    readonly url: string;\n} | {\n    readonly kind: \'opaque\';\n    readonly description: string;\n};',
   },
   {
     name: 'SkillViewOptions',
