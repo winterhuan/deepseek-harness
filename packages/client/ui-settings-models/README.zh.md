@@ -120,7 +120,7 @@ kind: "package-reference"
 <details>
 <summary>维护者的工作上下文——点击展开</summary>
 
-无。
+提供方行卡片使用 16px 普通圆角，不应用全局超椭圆角样式。
 
 </details>
 

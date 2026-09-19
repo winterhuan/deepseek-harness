@@ -61,6 +61,12 @@ describe('ModelsSection theme styles', () => {
     expect(block('.rowCard')).not.toMatch(/\bbackground\s*:/)
   })
 
+  it('uses circular 16px corners for provider row cards', () => {
+    const providerCard = block('.rowCard')
+    expect(providerCard).toContain('border-radius: 16px')
+    expect(providerCard).toContain('corner-shape: round')
+  })
+
   it('gives every dropdown the shared chevron instead of the OS arrow', () => {
     // `select.input` caps the control at 240px, and the OS arrow is painted
     // flush inside that shrunk right edge — visibly tighter than every other

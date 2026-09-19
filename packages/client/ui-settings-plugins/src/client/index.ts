@@ -24,6 +24,7 @@ import { resolveSlotLabel } from '@deepseek-ai/dsh-client-ui-slots'
 import type {} from '@deepseek-ai/dsh-api-remotes/client'
 import { AgentLoopCard } from './AgentLoopCard.tsx'
 import { BashCard } from './BashCard.tsx'
+import { CreativeProduceCard } from './CreativeProduceCard.tsx'
 import { PluginsSettingsSection } from './PluginsSettingsSection.tsx'
 import type { PluginsSettingsSectionInjected, PluginsSettingsTabEntry } from './PluginsSettingsSection.tsx'
 import { SubagentCard } from './SubagentCard.tsx'
@@ -33,6 +34,9 @@ import { WebSearchCard } from './WebSearchCard.tsx'
 import { AGENT_LOOP_NS, AgentLoopCardController } from './agent-loop-card-controller.ts'
 import { SHELL_NS, BashCardController } from './bash-card-controller.ts'
 import {
+  CREATIVE_PRODUCE_NS, CreativeProduceCardController,
+} from './creative-produce-card-controller.ts'
+import {
   SUBAGENT_MODEL_SELECTION_NS, SubagentModelSelectionCardController,
 } from './subagent-model-selection-card-controller.ts'
 import { WEB_SEARCH_NS, WebSearchCardController } from './web-search-card-controller.ts'
@@ -40,6 +44,7 @@ import { en, zh } from './locales.ts'
 
 export type { PluginsSettingsSectionInjected, PluginsSettingsSectionProps } from './PluginsSettingsSection.tsx'
 export type { PluginConfigFormProps } from './PluginConfigForm.tsx'
+export type { CreativeProduceCardProps } from './CreativeProduceCard.tsx'
 export type { FieldProps } from './fields.tsx'
 export type {
   CardActions, CardFieldSpec, CardFieldState, CardSecretSpec, CardShell,
@@ -47,6 +52,9 @@ export type {
 export type { AgentLoopCardFace, AgentLoopCardState } from './agent-loop-card-controller.ts'
 export type { BashCardFace, BashCardState } from './bash-card-controller.ts'
 export type { WebSearchCardFace, WebSearchCardState } from './web-search-card-controller.ts'
+export type {
+  CreativeProduceCardFace, CreativeProduceCardState, ProduceKeyField,
+} from './creative-produce-card-controller.ts'
 
 /** Dictionary namespace owned by this plugin. */
 const NS = 'settings.plugins'
@@ -73,6 +81,8 @@ export function apply(ctx: ClientContext): void {
     ctx.settingsScope.bind({ namespace: SUBAGENT_MODEL_SELECTION_NS }),
     ctx,
   )
+  const creativeProduce = new CreativeProduceCardController(
+    ctx.settingsScope.bind({ namespace: CREATIVE_PRODUCE_NS }), ctx)
   const subagentLimitsFace = subagentLimits.inject()
   const subagentModelsFace = subagentModelSelection.inject()
 
@@ -80,7 +90,10 @@ export function apply(ctx: ClientContext): void {
   // scope publishes nothing when one is written. This is the only signal that
   // a key written on another surface reached the Host.
   ctx.effect(
-    () => ctx.remote.$on('credentials/reference-updated', (ref) => { webSearch.refreshCredential(ref) }),
+    () => ctx.remote.$on('credentials/reference-updated', (ref) => {
+      webSearch.refreshCredential(ref)
+      creativeProduce.refreshCredential(ref)
+    }),
     'ui-settings-plugins: credential invalidations',
   )
   ctx.effect(
@@ -119,6 +132,9 @@ export function apply(ctx: ClientContext): void {
     [[WEB_SEARCH_NS], () => ctx.slots.inject('plugins.item', () => ctx.slots.register({
       name: 'plugins.item', id: 'web-search', order: 40, label: () => t('webSearchTitle'), locale: NS, inject: () => webSearch.inject(),
     }, WebSearchCard))],
+    [[CREATIVE_PRODUCE_NS], () => ctx.slots.inject('plugins.item', () => ctx.slots.register({
+      name: 'plugins.item', id: 'creative-produce', order: 50, label: () => t('produceTitle'), locale: NS, inject: () => creativeProduce.inject(),
+    }, CreativeProduceCard))],
   ]
   // The shared SettingsScope mirror updates after document commits and reconnects.
   const describeFace = ctx.settingsScope.describe()

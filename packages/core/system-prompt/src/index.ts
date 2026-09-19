@@ -162,6 +162,12 @@ const SECTION_ORDERS = {
 /** Name of a centrally allocated prompt-section position. */
 export type PromptSectionOrderName = keyof typeof SECTION_ORDERS
 
+/**
+ * Deprecated first-party section order alias, kept for existing imports.
+ * @deprecated Use {@link SECTION_ORDERS} via {@link SystemPrompt.getSectionOrder}.
+ */
+export const FIRST_PARTY_SECTION_ORDER = SECTION_ORDERS
+
 const CONTEXT_ORDERS = {
   SANDBOX_POLICY: 110,
   APPROVAL_POLICY: 115,

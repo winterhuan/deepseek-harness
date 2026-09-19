@@ -188,6 +188,9 @@ const packageFileExtras: Readonly<Record<string, readonly string[]>> = {
     'lib/helper.js', 'lib/protocol.js', 'lib/schemas.js',
     'lib/protocol-*.js', 'lib/schemas-*.js', 'lib/stream-security-*.js',
   ],
+  // Creative workbench bundles pinned knowledge and example assets; publication
+  // must include the markdown/python/js knowledge tree and the prebuilt game demo.
+  '@deepseek-ai/dsh-creative': ['knowledge/**/*'],
   // Ordinary native containment ships a path-loaded runner and its shared
   // runner chunk beside the existing node-pty permission repair.
   '@deepseek-ai/dsh-subprocess-local': [

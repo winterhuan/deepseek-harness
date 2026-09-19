@@ -55,6 +55,7 @@
 .rowCard {
   border: 0.5px solid var(--dsw-alias-border-l4);
   border-radius: 16px;
+  corner-shape: round;
   padding: 12px 14px;
   display: flex;
   flex-direction: column;

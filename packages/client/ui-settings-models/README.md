@@ -120,7 +120,7 @@ These limits define the editor's field coverage and the page's reach; they are c
 <details>
 <summary>Working context for maintainers — click to expand</summary>
 
-None.
+Provider row cards use circular 16px corners independently of the global superellipse styling.
 
 </details>
 

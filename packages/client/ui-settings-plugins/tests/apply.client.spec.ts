@@ -133,6 +133,31 @@ describe('ui-settings-plugins apply', () => {
     expect(entries.every(entry => entry.locale === 'settings.plugins')).toBe(true)
   })
 
+  it('registers the creative production page only while the Host serves its namespace', async () => {
+    const { ctx, slots, describeSettings, remote } = await bench(['creative-produce'])
+    onTestFinished(() => ctx.fiber.dispose())
+    declareRoot(slots)
+    await ctx.plugin({ inject: [...inject], apply }).await()
+
+    await vi.waitFor(() => { expect(slots.entries('plugins.item')).toHaveLength(1) })
+    const entry = slots.entries('plugins.item')[0]!
+    expect(entry.options.id).toBe('creative-produce')
+    expect(resolveSlotLabel(entry.options.label)).toBe('创意生产')
+    const face = (entry as unknown as { inject?: () => unknown }).inject?.() as { hooks: Record<string, unknown> }
+    expect(Object.keys(face.hooks)).toEqual(['creativeProduceCard'])
+
+    describeSettings.mockResolvedValue({
+      ok: true,
+      value: {
+        writable: true, hasDocument: true,
+        namespaces: [],
+      },
+    })
+    remote.emit('settings/document-updated', ['creative-produce', 1])
+
+    await vi.waitFor(() => { expect(slots.entries('plugins.item')).toEqual([]) })
+  })
+
   it.each([
     ['subagent'],
     ['subagent-model-selection'],
