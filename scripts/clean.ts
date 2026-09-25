@@ -138,7 +138,11 @@ export class RepositoryCleaner {
           ? dirname(typesDirectory)
           : typesDirectory === nativeEntryOutput
             ? typesDirectory
-            : undefined
+            // A declaration-only program owns its whole outDir: it emits no
+            // runtime bundles beside it, so nothing sibling-owned is missed.
+            : parsed.options.emitDeclarationOnly === true
+              ? typesDirectory
+              : undefined
         if (outputDirectory === undefined) {
           throw new Error(`clean: expected TypeScript outDir to end in /types: ${repositoryPath(this.root, typesDirectory)}`)
         }

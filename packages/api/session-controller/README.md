@@ -82,6 +82,8 @@ GUI model selection requires the exact provider/model pair in the available cata
 
 A successful `selectModel` response acknowledges the Session-local selection without waiting for the default profile setting to save. Default saves run in the background in submission order; a failure logs a warning and leaves the Session selection intact. New Sessions read the last successfully saved default.
 
+Client sessions expose control-baseline readiness on `sessions.jobsBaseline`, separately from the cached `jobsBySession` mirror carried on `sessions.list`. Its `ready` is false before the first complete baseline, after carrier loss, or after a terminal control-stream failure, and becomes true when a full baseline replaces the process-local state. A connection-ready notification does not invalidate an accepted baseline. Consumers wait for that baseline before classifying an absent job as unavailable; reading a job snapshot never consumes process output.
+
 -----
 
 <a id="configuration"></a>

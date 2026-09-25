@@ -22,6 +22,7 @@ kind: "package-reference"
 - [轮次过程折叠](#turn-process-folding)
 - [分组渲染](#grouped-rendering)
 - [滚动归属](#scroll-ownership)
+- [文件打开](#file-opening)
 - [模型体验](#model-experience)
 - [已知限制与暂缓事项](#known-limitations-and-deferred-work)
 - [开发备注](#dev-note)
@@ -137,6 +138,13 @@ Chat 会在历史前插与 renderer 重新挂载时恢复语义锚点，并且�
 活跃轮次高亮采用近似定位：`readVisibleTurn` 对正文容器的直属 Node/Group 布局盒二分，落在间隙时保留前方候选。它不做文档命中测试，也不查询 Group 成员或全部 Turn 标记。空 Seat 保留零高度的流内布局盒，使外层位置有序且不增加间距。这种定位不改变语义位置捕获或分页补偿。
 
 </details>
+
+-----
+
+<a id="file-opening"></a>
+## 文件打开
+
+对话中的文件操作调用类型化的 `conversation/open-file` 瀑布，携带当前 `SessionId`、原始路径和 `next()`。工作台渲染器只接管已识别的文件，并通过 `next()` 委托其他路径；最终处理器在右侧 Sidebar 中打开文件资源，并将请求的行号保留为导航参数。释放监听器即可移除拦截，不改变对话按钮或 DOM 所有权。
 
 -----
 

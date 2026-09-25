@@ -22,6 +22,7 @@ File-mention providers receive the viewed Session ID with the closing-turn owner
 - [Turn Process Folding](#turn-process-folding)
 - [Grouped rendering](#grouped-rendering)
 - [Scroll ownership](#scroll-ownership)
+- [File opening](#file-opening)
 - [Model Experience](#model-experience)
 - [Known Limitations and Deferred Work](#known-limitations-and-deferred-work)
 - [Dev Note](#dev-note)
@@ -137,6 +138,13 @@ Within a process group, wheel, touchstart, and any pointerdown interrupt an acti
 Active-Turn highlighting is approximate: `readVisibleTurn` binary-searches the content column's direct Node/Group boxes and retains the preceding candidate in gaps. It neither hit-tests the document nor searches Group members or all Turn markers. Empty Seats retain zero-height in-flow boxes so outer positions remain ordered without extra spacing. This lookup does not change semantic position capture or paging compensation.
 
 </details>
+
+-----
+
+<a id="file-opening"></a>
+## File opening
+
+Transcript file actions invoke the typed `conversation/open-file` waterfall with the current `SessionId`, the supplied path and `next()`. A workspace renderer handles only its recognized files and delegates every other path through `next()`; the final handler opens a file resource in the right Sidebar and preserves any requested line as a navigation parameter. Listener disposal removes the interception without changing transcript buttons or DOM ownership.
 
 -----
 
