@@ -1,0 +1,13 @@
+version: 1
+scenario: creative-production
+profile: web
+composition: web-creative-production
+recording: authored
+header:
+  class: web-creative-production
+  pin: true
+replay:
+  override: true
+platform: posix
+workspace:
+  final: true

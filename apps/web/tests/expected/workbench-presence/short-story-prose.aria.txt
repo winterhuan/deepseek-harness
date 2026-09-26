@@ -1,0 +1,37 @@
+- tablist:
+  - tab "创作工作台 关闭" [selected]:
+    - text: 创作工作台
+    - button "关闭":
+      - img
+  - tab "文件 关闭":
+    - text: 文件
+    - button "关闭":
+      - img
+  - button "新标签页":
+    - img
+  - button "分栏"
+  - button "全屏"
+  - button "收起右侧边栏":
+    - img
+- complementary:
+  - strong: ✦ Creative
+  - text: 小说
+  - button "刷新项目文件": ↻
+  - tablist "创作工作台":
+    - tab "小说" [selected]
+    - tab "短剧"
+    - tab "游戏"
+    - tab "视频"
+  - navigation "小说项目文件":
+    - group:
+      - text: › 灯下 3
+      - button "灯下/设定.md": 设定.md
+      - button "灯下/小节大纲.md": 小节大纲.md
+      - button "灯下/正文.md": 正文.md
+- main:
+  - text: 灯下/正文.md
+  - tablist "Markdown 查看方式":
+    - tab "预览" [selected]
+    - tab "源码"
+  - article "灯下/正文.md 渲染预览":
+    - paragraph: 灯下的故事。

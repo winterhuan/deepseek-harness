@@ -1,0 +1,9 @@
+version: 1
+scenario: workbench-presence
+profile: web
+composition: web-default
+recording: authored
+header:
+  class: web-default
+workspace:
+  final: true

@@ -1,0 +1,31 @@
+# Bilingual-pair consistency record for 2026-09-26-creative-branch-hardening.md (docs/i18n/README.md): per heading
+# section, a hash of its English and Chinese blocks outside code blocks and generated regions.
+# After editing either side, bring the other along and re-record with:
+#   pnpm run verify-translation-pairing --write .agents/notes/proposed/simplification/2026-09-26-creative-branch-hardening.md
+/agent-note-harden-and-simplify-the-creative-branch:
+  en: a727566d1d521baf
+  zh: 75750d27e2317240
+/agent-note-harden-and-simplify-the-creative-branch/problem:
+  en: 5bbc79b17291cfa0
+  zh: a84ab09c67457ea5
+/agent-note-harden-and-simplify-the-creative-branch/branch-inventory:
+  en: b44e6d1d7b9a8cf7
+  zh: 33713dc0304dfbbf
+/agent-note-harden-and-simplify-the-creative-branch/implementation-problems:
+  en: 47f1168261c2af4a
+  zh: 5d92d95cb068cca0
+/agent-note-harden-and-simplify-the-creative-branch/simplification-opportunities:
+  en: dcbcf87a4d4c28ff
+  zh: c484d78fd9493190
+/agent-note-harden-and-simplify-the-creative-branch/proposal:
+  en: f4497c078ac0866e
+  zh: 713cda8578995369
+/agent-note-harden-and-simplify-the-creative-branch/alternatives-considered:
+  en: cee46a83174d891c
+  zh: 9a8b8bbb024b3f16
+/agent-note-harden-and-simplify-the-creative-branch/acceptance-criteria:
+  en: ca1a1b2d4a288712
+  zh: b9c5ecf367d664ca
+/agent-note-harden-and-simplify-the-creative-branch/risks:
+  en: eecc9437f7c6ab93
+  zh: 5cc896340a9f1ed8

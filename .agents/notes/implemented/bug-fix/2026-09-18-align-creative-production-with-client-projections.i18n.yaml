@@ -1,0 +1,40 @@
+# Bilingual-pair consistency record for 2026-09-18-align-creative-production-with-client-projections.md (docs/i18n/README.md): per heading
+# section, a hash of its English and Chinese blocks outside code blocks and generated regions.
+# After editing either side, bring the other along and re-record with:
+#   pnpm run verify-translation-pairing --write .agents/notes/implemented/bug-fix/2026-09-18-align-creative-production-with-client-projections.md
+/agent-note-creative-production-reads-current-client-projections:
+  en: fbbb415911e896af
+  zh: baf51fc8923ae479
+/agent-note-creative-production-reads-current-client-projections/problem:
+  en: eefb4424d4d9caa9
+  zh: 847d34f265eb9718
+/agent-note-creative-production-reads-current-client-projections/decision:
+  en: c7d3a3f7d375695e
+  zh: 9cc050e101a9e0eb
+/agent-note-creative-production-reads-current-client-projections/decision/queue-reconciliation-folds-only-next-turn:
+  en: 6ff682a1de912a90
+  zh: c227bc5ee43874b9
+/agent-note-creative-production-reads-current-client-projections/decision/one-session-scoped-operation-owns-the-complete-submission-handle:
+  en: f65f8f04178b96a4
+  zh: 4bddd33643aa8d3b
+/agent-note-creative-production-reads-current-client-projections/decision/a-monotonic-sequence-cursor-records-consumed-production-projections:
+  en: 4a5a4221fd45c175
+  zh: 5cdb42fd42cc326f
+/agent-note-creative-production-reads-current-client-projections/decision/active-tool-roots-come-from-formal-chat-nodes:
+  en: cb707bdb5519281f
+  zh: 3b7169bc0c2435be
+/agent-note-creative-production-reads-current-client-projections/retained-implementation:
+  en: 3de6555e72f24764
+  zh: d53e09d51205e4f7
+/agent-note-creative-production-reads-current-client-projections/consequences:
+  en: 37108fc4055e20c1
+  zh: a80a18d30c665e28
+/agent-note-creative-production-reads-current-client-projections/testing:
+  en: 4c374d56d4b5b3a6
+  zh: 5c940d445b816eec
+/agent-note-creative-production-reads-current-client-projections/alternatives-considered:
+  en: 39bab0d4f8b9e768
+  zh: d5dfcfab276d6bd5
+/agent-note-creative-production-reads-current-client-projections/risks:
+  en: 95e313069625edf2
+  zh: 1258149559fcf9d9

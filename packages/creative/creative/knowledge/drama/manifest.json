@@ -1,0 +1,18 @@
+{
+  "skills": [
+    "short-drama",
+    "short-drama-assets",
+    "short-drama-develop",
+    "short-drama-image-prompts",
+    "short-drama-novel-analyze",
+    "short-drama-produce",
+    "short-drama-review",
+    "short-drama-storyboard",
+    "short-drama-video-prompts",
+    "short-drama-write"
+  ],
+  "notes": [
+    "skills/short-drama-produce/scripts/production_tool.py accepts storyboard SHOT- image jobs during confirmation.",
+    "skills/short-drama-produce/scripts/agnes_adapters.py supplies the Agnes image and video adapters."
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "skills": [
+    "browser-cdp",
+    "story",
+    "story-cover",
+    "story-deslop",
+    "story-import",
+    "story-long-analyze",
+    "story-long-scan",
+    "story-long-write",
+    "story-review",
+    "story-setup",
+    "story-short-analyze",
+    "story-short-scan",
+    "story-short-write"
+  ],
+  "roles": [
+    "chapter-extractor",
+    "character-designer",
+    "consistency-checker",
+    "narrative-writer",
+    "story-architect",
+    "story-explorer",
+    "story-researcher"
+  ],
+  "notes": [
+    "skills/story-import/scripts/export_novel_txt.py exports chapter files with a source map for adaptation.",
+    "skills/story-import/scripts/record_lineage.py records cross-domain adaptation lineage."
+  ]
+}

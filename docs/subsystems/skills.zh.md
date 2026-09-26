@@ -236,6 +236,12 @@ interface Config {
 
 `SkillListRequest` 通过 `sessionId` 指定一个 Session；`SkillListValue` 返回允许用户调用的条目，其中包含名称、描述、可选使用提示与模型调用可用性。`SessionSkillCatalog` 在不激活 Agent 的前提下读取 Session cwd 与记录的 preset。live Agent 可以提供其作用域 registry，冷 Session 则使用 preset 的 standing scope。
 
+## 只读 skill 查看器
+
+[skill 查看器](../../packages/skill/skill-viewer/README.zh.md) 通过 `ctx.skillViewerCatalog` 暴露 `skillViewer` Remote 命名空间。`listDetails` 接受包含 `sessionId` 的 `SkillViewerListRequest`，返回 `SkillViewerListValue`，其中包含允许用户调用的 `SkillViewerEntry` 记录，以及表示提供方观察不完整的 `stale` 标记。每个条目都包含来源和提供方。`get` 接受包含 `sessionId` 与 `name` 的 `SkillViewerGetRequest`，返回 `SkillViewerGetValue`，其中包含说明正文、可选文件路径、可选 `SkillViewerResourceBase`，以及本地资源的 `SkillViewerReferences` 列表。`readReference` 接受指定 Session、技能和相对参考路径的 `SkillViewerReferenceRequest`，返回包含 UTF-8 正文、文件大小与截断状态的 `SkillViewerReferenceValue`。[传输类型](../../packages/skill/skill-viewer/src/types.ts) 定义请求与响应字段。
+
+查看器按 Session 的 cwd 与 preset 作用域读取，不激活 Agent，也不写入会话事件。这些读取只供人类查看；composer 目录和面向模型的工具仍是独立的 Consumer。[浏览器面板](../../packages/client/ui-skill-viewer/README.zh.md) 负责渲染与请求缓存。
+
 <!-- BEGIN GENERATED cordis-surface (gen-cordis-catalog.ts) — do not edit between markers -->
 
 <a id="cordis-surface"></a>
@@ -326,6 +332,44 @@ async get(name: string, options: SkillViewOptions = {}): Promise<SkillDefinition
 ```
 
 Source: [`packages/skill/skill/src/index.ts`](../../packages/skill/skill/src/index.ts)
+
+<a id="ctxskillviewercatalog--skillviewercatalog"></a>
+
+### `ctx.skillViewerCatalog` — `SkillViewerCatalog`
+
+Host service backing `ctx.remote.skillViewer` without activating a cold Agent.
+
+```ts cordis-catalog
+/**
+ * List the user-invocable skills visible to one Session composition, with
+ * the source and provider metadata the composer catalog omits.
+ * @param request - Session identity whose cwd and preset select the catalog view.
+ * @param signal - caller lifetime carried by the Remote transport; admitted catalog reads retain their existing completion semantics.
+ * @returns user-invocable skill metadata without bodies, plus whether a provider observation was incomplete.
+ * @throws RemoteError when the Session cannot be inspected or no registry can serve it.
+ */
+@Remote async listDetails(request: SkillViewerListRequest, signal: AbortSignal): Promise<SkillViewerListValue>
+
+/**
+ * Load one user-invocable skill body for viewer presentation.
+ * @param request - Session identity selecting the catalog view plus the exact skill name from the viewer list.
+ * @param signal - caller lifetime used to cancel reference discovery.
+ * @returns the full skill with body content and its local reference listing.
+ * @throws RemoteError when the Session cannot be inspected, the name is invalid, or no user-invocable skill with this name is available.
+ */
+@Remote async get(request: SkillViewerGetRequest, signal: AbortSignal): Promise<SkillViewerGetValue>
+
+/**
+ * Read one local reference of a user-invocable skill without starting an Agent.
+ * @param request - Session, skill name, and relative file path under references/.
+ * @param signal - caller lifetime used to cancel file reading.
+ * @returns a bounded UTF-8 preview with explicit truncation and file-size metadata.
+ * @throws RemoteError when the Session or skill is unavailable, the path is unsafe, or the file cannot be read as text.
+ */
+@Remote async readReference(request: SkillViewerReferenceRequest, signal: AbortSignal): Promise<SkillViewerReferenceValue>
+```
+
+Source: [`packages/skill/skill-viewer/src/index.ts`](../../packages/skill/skill-viewer/src/index.ts)
 
 <a id="skills-events"></a>
 

@@ -1,0 +1,37 @@
+# Bilingual-pair consistency record for 2026-09-22-short-drama-production-consistency.md (docs/i18n/README.md): per heading
+# section, a hash of its English and Chinese blocks outside code blocks and generated regions.
+# After editing either side, bring the other along and re-record with:
+#   pnpm run verify-translation-pairing --write .agents/notes/proposed/architecture/2026-09-22-short-drama-production-consistency.md
+/agent-note-short-drama-production-consistency-and-result-ownership:
+  en: 64450663018f76b0
+  zh: 7a9e208118cc3148
+/agent-note-short-drama-production-consistency-and-result-ownership/problem:
+  en: 6abc8a2157bfe0da
+  zh: 7a224c55f5feb761
+/agent-note-short-drama-production-consistency-and-result-ownership/proposal:
+  en: 986dd8097aac4d3d
+  zh: 2c89af85628555c5
+/agent-note-short-drama-production-consistency-and-result-ownership/proposal/block-production-on-protocol-errors:
+  en: 5dcc23a4ab208501
+  zh: 06457aa84e832611
+/agent-note-short-drama-production-consistency-and-result-ownership/proposal/read-one-episode-consistently:
+  en: 4d5a1cae5d6ddea5
+  zh: 328bc1c3fa6a648c
+/agent-note-short-drama-production-consistency-and-result-ownership/proposal/make-output-ownership-explicit:
+  en: 2683fa34b2876515
+  zh: 21cadda743f11639
+/agent-note-short-drama-production-consistency-and-result-ownership/proposal/give-the-document-protocol-one-executable-owner:
+  en: 0b3291df6eca9d87
+  zh: 0f3b3f04e7560f2b
+/agent-note-short-drama-production-consistency-and-result-ownership/proposal/require-stable-visual-ids:
+  en: 9f39bdf09a5ca5ff
+  zh: c40b7ae35e749194
+/agent-note-short-drama-production-consistency-and-result-ownership/alternatives-considered:
+  en: ecefe0fc538393ca
+  zh: 4846998601e30228
+/agent-note-short-drama-production-consistency-and-result-ownership/acceptance-criteria:
+  en: 74ed6e6c8b4b8fce
+  zh: e43cf7fc10307c57
+/agent-note-short-drama-production-consistency-and-result-ownership/risks:
+  en: c75bbafc739d6e9b
+  zh: 696f0c917182c76e

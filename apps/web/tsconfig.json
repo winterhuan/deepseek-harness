@@ -40,6 +40,7 @@
     "tests/voice-download.e2e.ts",
     "tests/prefix-proxy.ts",
     "tests/auto-review-fixture.ts",
+    "tests/profile-scaffold.ts",
     "tests/scaffold-generation.spec.ts",
     "tests/scaffold-hermetic.e2e.ts",
     "tests/startup-rpc-budget.e2e.ts",
@@ -177,7 +178,9 @@
     "tests/window-drag-coverage.e2e.ts",
     "tests/complex-history.perf.ts",
     "tests/pwsh-terminal.e2e.ts",
-    "tests/workflow-run.e2e.ts"
+    "tests/workflow-run.e2e.ts",
+    "tests/workbench-presence.e2e.ts",
+    "tests/creative-production.e2e.ts"
   ],
   "references": [
     { "path": "../../packages/experimental/auto-review" },

@@ -1,0 +1,37 @@
+# Bilingual-pair consistency record for README.md (docs/i18n/README.md): per heading
+# section, a hash of its English and Chinese blocks outside code blocks and generated regions.
+# After editing either side, bring the other along and re-record with:
+#   pnpm run verify-translation-pairing --write packages/client/ui-settings-creative-produce/README.md
+/:
+  en: 021131ad251b6dc9
+  zh: 676b52b081d0b51b
+/deepseek-ai-dsh-client-ui-settings-creative-produce:
+  en: edfec32e45ac96b0
+  zh: 582edef5ae60c9fd
+/deepseek-ai-dsh-client-ui-settings-creative-produce/summary:
+  en: dad76d7e25863d87
+  zh: 7a1372912172cb8a
+/deepseek-ai-dsh-client-ui-settings-creative-produce/table-of-contents:
+  en: d152484eb41ac6b4
+  zh: 09388d293f9be9cb
+/deepseek-ai-dsh-client-ui-settings-creative-produce/use-this-package:
+  en: 7f0d7f2e133c0dc4
+  zh: c0da3b98d9107fa1
+/deepseek-ai-dsh-client-ui-settings-creative-produce/understand-the-implementation:
+  en: 5f2f8c674067ac68
+  zh: ec2955ca54b49b05
+/deepseek-ai-dsh-client-ui-settings-creative-produce/further-exploration:
+  en: f78e002ad4e1866a
+  zh: 2097abd146f6a0be
+/deepseek-ai-dsh-client-ui-settings-creative-produce/model-experience:
+  en: 6b7c6f82ab6c8435
+  zh: aca6f3e424bbab0a
+/deepseek-ai-dsh-client-ui-settings-creative-produce/model-experience/kv-cache-effect:
+  en: ca75c51c89c2c9b0
+  zh: b4bbe8239b60ddf0
+/deepseek-ai-dsh-client-ui-settings-creative-produce/known-limitations-and-deferred-work:
+  en: 50e5018f864db7ab
+  zh: abb3e1c50ac32426
+/deepseek-ai-dsh-client-ui-settings-creative-produce/known-limitations-and-deferred-work/dev-note:
+  en: e67f633dc6fe7773
+  zh: e88aeb617ffb74ea

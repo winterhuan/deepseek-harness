@@ -1,0 +1,10 @@
+version: 1
+scenario: creative-skill-load
+profile: headless
+composition: creative-skill-load
+recording: authored
+header:
+  class: creative-skill-load
+  pin: true
+  systemPromptSource: text-turn
+platform: posix

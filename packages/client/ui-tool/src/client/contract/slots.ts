@@ -21,6 +21,11 @@ declare module '@deepseek-ai/dsh-client-ui-slots' {
      * generic row. The owner supplies the call identity and frozen running
      * or settled node through explicit phase props. Preparing blocks have no dispatched
      * arguments; useToolCallArgumentsPartial optionally subscribes to their raw prefix.
+     * @example
+     * ctx.slots.inject('tool.call.toolview', () => ctx.slots.register(
+     *   { name: 'tool.call.toolview', key: 'my_tool', locale: NS },
+     *   MyToolView,
+     * ))
      */
     'tool.call.toolview': {
       kind: 'keyed'

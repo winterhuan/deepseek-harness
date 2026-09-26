@@ -1,0 +1,5 @@
+- insert:
+    - id: creative
+      name: '@deepseek-ai/dsh-creative'
+    - id: creative-produce
+      name: '@deepseek-ai/dsh-creative/produce'

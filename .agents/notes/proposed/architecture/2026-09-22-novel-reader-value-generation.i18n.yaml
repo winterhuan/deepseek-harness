@@ -1,0 +1,37 @@
+# Bilingual-pair consistency record for 2026-09-22-novel-reader-value-generation.md (docs/i18n/README.md): per heading
+# section, a hash of its English and Chinese blocks outside code blocks and generated regions.
+# After editing either side, bring the other along and re-record with:
+#   pnpm run verify-translation-pairing --write .agents/notes/proposed/architecture/2026-09-22-novel-reader-value-generation.md
+/agent-note-novel-generation-must-optimize-reader-value:
+  en: 61d802ea22003d5d
+  zh: 9ef05466c916c658
+/agent-note-novel-generation-must-optimize-reader-value/problem:
+  en: 348f34342aec7010
+  zh: 3ff8ae349cfee2b1
+/agent-note-novel-generation-must-optimize-reader-value/proposal:
+  en: 986dd8097aac4d3d
+  zh: 2c89af85628555c5
+/agent-note-novel-generation-must-optimize-reader-value/proposal/add-a-reader-value-gate-before-chapter-commit:
+  en: f730bd8360889fc3
+  zh: fccfd7e3b8b30d58
+/agent-note-novel-generation-must-optimize-reader-value/proposal/validate-outlines-before-prose-generation:
+  en: a1b86d1deb11fe52
+  zh: 6a46f61d2cc736f4
+/agent-note-novel-generation-must-optimize-reader-value/proposal/separate-planning-prose-and-review-responsibilities:
+  en: 66d2696d413004ef
+  zh: d46170142ed5a2e2
+/agent-note-novel-generation-must-optimize-reader-value/proposal/reduce-hard-constraints-in-the-writing-prompt:
+  en: 6fd95de60e0e73c1
+  zh: 251c1276033bea4d
+/agent-note-novel-generation-must-optimize-reader-value/proposal/preserve-reader-value-evidence-for-continuation:
+  en: fdad9abc968a26e6
+  zh: da3bbc9a0d0e1701
+/agent-note-novel-generation-must-optimize-reader-value/alternatives-considered:
+  en: e17a91731475153e
+  zh: e1e0d201d61ff21b
+/agent-note-novel-generation-must-optimize-reader-value/acceptance-criteria:
+  en: a608b88b0de5608a
+  zh: 14065a24e620712f
+/agent-note-novel-generation-must-optimize-reader-value/risks:
+  en: 8d2748b1c87d1def
+  zh: 605f87986780d327
