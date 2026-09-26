@@ -1,0 +1,43 @@
+# Bilingual-pair consistency record for 2026-09-03-creative-workbench.md (docs/i18n/README.md): per heading
+# section, a hash of its English and Chinese blocks outside code blocks and generated regions.
+# After editing either side, bring the other along and re-record with:
+#   pnpm run verify-translation-pairing --write .agents/notes/implemented/feature/2026-09-03-creative-workbench.md
+/agent-note-creative-workbench-bundled-knowledge-and-skill-viewer:
+  en: e947ebf0b9061596
+  zh: df6ec5336c35777e
+/agent-note-creative-workbench-bundled-knowledge-and-skill-viewer/problem:
+  en: a35c2a64d6290f15
+  zh: f53b6cd4a127e385
+/agent-note-creative-workbench-bundled-knowledge-and-skill-viewer/decision:
+  en: b7f57ea225ac2869
+  zh: 7099125577dfb87b
+/agent-note-creative-workbench-bundled-knowledge-and-skill-viewer/decision/composition-and-knowledge:
+  en: 2dd5fa086066b658
+  zh: 95ad0e9b8080d951
+/agent-note-creative-workbench-bundled-knowledge-and-skill-viewer/decision/workspace-and-sidebar:
+  en: 86f149e048ef1bfb
+  zh: 8b36d732b4f46b02
+/agent-note-creative-workbench-bundled-knowledge-and-skill-viewer/decision/project-and-file-ownership:
+  en: 97eb9cfc02c1a2da
+  zh: d60f1518512625c1
+/agent-note-creative-workbench-bundled-knowledge-and-skill-viewer/decision/production-and-credentials:
+  en: e5ddfab810ee1a55
+  zh: ce6a010b0b49a85a
+/agent-note-creative-workbench-bundled-knowledge-and-skill-viewer/decision/adaptation-and-source-material:
+  en: 20e3bef9315cb715
+  zh: a74f98400a285992
+/agent-note-creative-workbench-bundled-knowledge-and-skill-viewer/decision/read-only-skill-viewer:
+  en: 130b0206b19ddd6e
+  zh: cb3cfbc80e5ecf4a
+/agent-note-creative-workbench-bundled-knowledge-and-skill-viewer/decision/localization:
+  en: cfea69662071b123
+  zh: efff7c255d80a33b
+/agent-note-creative-workbench-bundled-knowledge-and-skill-viewer/alternatives-considered:
+  en: 0bf1aa6e59fb8acb
+  zh: 4e9b9c0b68b6d7b6
+/agent-note-creative-workbench-bundled-knowledge-and-skill-viewer/verification:
+  en: 8c99e21aac897789
+  zh: 7e97f27fd1546224
+/agent-note-creative-workbench-bundled-knowledge-and-skill-viewer/consequences:
+  en: 7e1ddacce903b3e8
+  zh: 62e64f37dbc430b9

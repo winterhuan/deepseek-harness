@@ -1,0 +1,70 @@
+# Bilingual-pair consistency record for README.md (docs/i18n/README.md): per heading
+# section, a hash of its English and Chinese blocks outside code blocks and generated regions.
+# After editing either side, bring the other along and re-record with:
+#   pnpm run verify-translation-pairing --write packages/creative/creative/README.md
+/:
+  en: c82023bfb370ae22
+  zh: dd96c6d0159142f7
+/deepseek-ai-dsh-creative:
+  en: 55c4f4354fc554d9
+  zh: 8ff57660cb732da9
+/deepseek-ai-dsh-creative/summary:
+  en: 90d57e5e94d766d0
+  zh: 17546a3819ffc325
+/deepseek-ai-dsh-creative/table-of-contents:
+  en: 0acac2a25e915e4e
+  zh: e3d6d25c5ea76c70
+/deepseek-ai-dsh-creative/use-this-package:
+  en: e6e02dfd81a21daf
+  zh: 6a005c12f1c2be23
+/deepseek-ai-dsh-creative/understand-the-implementation:
+  en: eed8c56b6af18473
+  zh: c318cd86d78a0b75
+/deepseek-ai-dsh-creative/further-exploration:
+  en: 0cb2d7fcae84ce3b
+  zh: 01e32627faafa265
+/deepseek-ai-dsh-creative/model-experience:
+  en: 215e7ba838619b7b
+  zh: a311da3843709f90
+/deepseek-ai-dsh-creative/model-experience/creative-skills-and-roles:
+  en: 5fb31e5d4540a635
+  zh: 5fb31e5d4540a635
+/deepseek-ai-dsh-creative/model-experience/creative-skills-and-roles/what-the-model-sees:
+  en: d49d965bb7265051
+  zh: f53f7669ad3c5fbd
+/deepseek-ai-dsh-creative/model-experience/creative-skills-and-roles/token-effect:
+  en: 79b0be5cd9f62a9a
+  zh: 890b49d7d60b2ea5
+/deepseek-ai-dsh-creative/model-experience/creative-skills-and-roles/kv-cache-effect:
+  en: fcd7545ce099bf38
+  zh: fcd7545ce099bf38
+/deepseek-ai-dsh-creative/model-experience/production-projection-tool:
+  en: 57e43ee77ae7e329
+  zh: 57e43ee77ae7e329
+/deepseek-ai-dsh-creative/model-experience/production-projection-tool/what-the-model-sees:
+  en: 51b11177e42daa6f
+  zh: eee326275176bb22
+/deepseek-ai-dsh-creative/model-experience/production-projection-tool/token-effect:
+  en: baf12a3482730324
+  zh: 6096fb2525e5b5f6
+/deepseek-ai-dsh-creative/model-experience/production-projection-tool/kv-cache-effect:
+  en: cab910301ced143b
+  zh: cab910301ced143b
+/deepseek-ai-dsh-creative/model-experience/production-credential-status:
+  en: 47eb28f6837c0514
+  zh: cfda63bbfc8312d0
+/deepseek-ai-dsh-creative/model-experience/production-credential-status/what-the-model-sees:
+  en: ef0b97d52b5beace
+  zh: 77f0c3976b16106a
+/deepseek-ai-dsh-creative/model-experience/production-credential-status/token-effect:
+  en: c2597ca73e5c8b1d
+  zh: 95be1b3765ad6b07
+/deepseek-ai-dsh-creative/model-experience/production-credential-status/kv-cache-effect:
+  en: 7213cb6c89c2c284
+  zh: 8a8dff5f46f3410f
+/deepseek-ai-dsh-creative/known-limitations-and-deferred-work:
+  en: 231f0177da7401b6
+  zh: dacf6517a17831dc
+/deepseek-ai-dsh-creative/known-limitations-and-deferred-work/dev-note:
+  en: 18875628ad13210a
+  zh: 1bfb071e4506ddb7

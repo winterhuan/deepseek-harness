@@ -1,0 +1,16 @@
+# Bilingual-pair consistency record for creative.md (docs/i18n/README.md): per heading
+# section, a hash of its English and Chinese blocks outside code blocks and generated regions.
+# After editing either side, bring the other along and re-record with:
+#   pnpm run verify-translation-pairing --write docs/subsystems/creative.md
+/creative:
+  en: 97995b4172799dcd
+  zh: 80df7856d356ebd2
+/creative/the-four-seams:
+  en: e9048020f0d3b774
+  zh: ab6335b338bfca43
+/creative/workbench-presentation:
+  en: 586649c42a621250
+  zh: 9e5f1e444e3fb6d7
+/creative/language-seam:
+  en: ef56ef2c18ccc531
+  zh: b158ad533d7ac166
